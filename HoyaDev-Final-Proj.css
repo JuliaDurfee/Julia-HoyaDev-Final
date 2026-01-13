@@ -8,8 +8,8 @@
     font-family: "Poppins", sans-serif;
 }
 body {
-  background: #ffffff; 
-  color: #92b7ff; 
+  background: #F7F6F3; 
+  color: #312520; 
   /* display: flex;
   justify-content: center;
   flex-wrap: wrap;
@@ -23,31 +23,32 @@ body {
     width:100%;
     height:60px;
     padding: 0 2rem;
-    background: #dce0f3;
+    background: #90B1CB;
     display:flex;
     align-items: center;
     justify-content: space-between;
     z-index: 1000;
+    gap: 110em;
 }
 .logo{
-    color: #b41b1b;
-    font-size:1.2rem;
+    color: #312520;
+    font-size:1.5rem;
     font-weight:bold;
+    margin: 2em;
 } 
-.menu-buttons ul {
+.menu-buttons ul{
     list-style: none;
     flex-direction: column;
     display: flex;
 }
 .menu-buttons ul li a{
-    color:#031049;
+    color:#5F6995;
     cursor:pointer;
-    padding:0.5rem 1rem;
+    padding:1rem 1rem;
     display: block;
-    transition: background 0.3s ease;
 }
 .menu-buttons ul li a:hover {
-    background-color: #555;
+    background-color: #9EBBD1;
 }
 #menu-toggle{
     display:none;
@@ -57,38 +58,36 @@ body {
     top:60px; /* top is 60px */
     left: 0;
     width:100%;
-    background: #dce0f3;
+    background: #ACC5D8;
     display:none;
     justify-content: flex-start; 
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 } 
 .menu-btn {
-    font-size: 1.5rem;
     cursor: pointer;
     display: block; /* Visible on mobile */
+    color: #312520;
+    margin-top: auto;
+    margin-right: auto;
 }
 #menu-toggle:checked ~ .menu-buttons {
     display: block;
 }
 @media (max-width: 450px){
     .menu-btn {
-        display: none; /* Hide hamburger */
+        display: none; /* Hide */
     }
     .menu-buttons {
-        display: block; /* Hide the menu by default on mobile */
+        display: block; /* Hide the menu by default */
         position: static;
-        /* top: 50px; 
-        right: 0; */
-        background-color: #333;
         width: auto;
     }
     .menu-buttons ul {
         flex-direction: row; /* Horizontal links */
     }
-
     .menu-buttons ul li a {
         border-top: none;
-        padding: 0.5rem 1rem;
+        padding: 5rem 5rem;
     }
 }
     /* Show the hamburger icon */
@@ -132,11 +131,13 @@ a{
     position: static; 
     width: 100%;
     font-size: 14px;
-    color: #031049;
+    color: #312520;
     display: table; 
     padding-bottom: 1rem;
+    padding-top: 1rem;
+    align-items: center;
 }
-menu-buttons .fas{
+.fas{
     position: relative; 
     width: 70px;
     height: 40px;
@@ -144,10 +145,11 @@ menu-buttons .fas{
     text-align: center;
 }
 a:hover{
-    background: #92b7ff;
+    background: #9EBBD1;
     transition: 0.5s;
 }
 nav-item{
+    gap: 5rem;
     position: relative;
     font-weight: bold; 
     padding-left: 15px;
@@ -255,7 +257,7 @@ button { /* style all the buttons*/
   border: none;
   border-radius: 999px;
   background: #92b7ff;
-  color: #020617;
+  color: #312520;
   font-weight: 600;
   cursor: pointer;
 }
@@ -323,10 +325,6 @@ input[type="text"]:focus {
   padding: 4px 8px;
   font-size: 0.8rem;
   border-radius: 999px;
-}
-.item-buttons .delete-btn {
-  background: #EF4444;
-  color: #020617;
 }
 .item-buttons .toggle-btn {
   background: #38BDF8;
