@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance App</title>
+
+    <!-- Link CSS -->
+    <link rel="stylesheet" href="HoyaDevFinalProject.css">
+</head>
+<body>
+
+    <header>
+        <h1>Welcome to My Website</h1>
+        <p>Use this to take daily class attendence.</p>
+    </header>
+
+    <nav>
+        <!--  <a href="#">Class #1</a> 
+        <a href="#">About</a> 
+        <a href="#">Contact</a> -->
+    </nav>
+
+    <main>
+        <div class="add-buttons">
+            <div class="add-class">
+                <h2>Add a class</h2>
+                <form id="add-form"> <!-- ADD CLASS -->
+                    <input id="new-item-input" type="text" placeholder="Add a new class..." required/>
+                    <button id="add-class-btn" type="submit">Add Class</button>
+                </form>
+            </div>
+            <div class="add-student"> <!-- ADD STUDENT -->
+                <h2>Add a student</h2>
+                <form id="add-student-form">
+                    <input id="new-student-input" type="text" placeholder="Add a new student..." required />
+                    <button type="submit">Add Student</button>
+                </form>
+            </div>
+        </div>
+        <div class="class-list">
+            <h2>Today's Attendence</h2>
+            <select id="classSelect"> <!-- CLASS DROPDOWN -->
+                <option value="">-- Select a Class --</option>
+            </select>
+        </div>
+
+  <!-- STUDENT LIST -->
+        <!-- <div class="ClassesSelection">
+            <div class="ClassesDropdown">
+
+                <button id="menu-toggle" class="dropbtn">Menu</button>
+                <div id="myDropdown" class="dropdown-content">
+    
+                 <div class="nested-dropdown">
+                    <button id="classes-toggle" class="DropdownButton">Classes</button>
+                    <div id="classes-content" class="nested-content">
+                        <a href="#">Class #1</a>
+                        <a href="#">Class #2</a>
+                        <a href="#">Class #3</a>
+                    </div>
+                </div>
+            </div>
+        </div> -->
+        <!-- <form id="add-form">
+            <input id="new-item-input" type="text" placeholder="Add a new student..." required/>
+            <button type="submit">Add</button>
+        </form>
+    <ul id="student-list"></ul> -->
+  <!-- </div> -->
+</main>
+
+    <!-- Link JavaScript -->
+    <script src="js/script.js" defer></script>
+</body>
+</html>
