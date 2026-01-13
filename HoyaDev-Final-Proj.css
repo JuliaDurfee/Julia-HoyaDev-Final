@@ -10,12 +10,109 @@
 body {
   background: #ffffff; 
   color: #92b7ff; 
-  display: flex;
+  /* display: flex;
   justify-content: center;
   flex-wrap: wrap;
-  flex-direction: column;
+  flex-direction: column; */
 }
 /* --- NAVIGATION BAR --- */
+.menu-header{
+    position: fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:60px;
+    padding: 0 2rem;
+    background: #dce0f3;
+    display:flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 1000;
+}
+.logo{
+    color: #b41b1b;
+    font-size:1.2rem;
+    font-weight:bold;
+} 
+.menu-buttons ul {
+    list-style: none;
+    flex-direction: column;
+    display: flex;
+}
+.menu-buttons ul li a{
+    color:#031049;
+    cursor:pointer;
+    padding:0.5rem 1rem;
+    display: block;
+    transition: background 0.3s ease;
+}
+.menu-buttons ul li a:hover {
+    background-color: #555;
+}
+#menu-toggle{
+    display:none;
+ }
+.menu-buttons{
+    position: absolute;
+    top:60px; /* top is 60px */
+    left: 0;
+    width:100%;
+    background: #dce0f3;
+    display:none;
+    justify-content: flex-start; 
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+} 
+.menu-btn {
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: block; /* Visible on mobile */
+}
+#menu-toggle:checked ~ .menu-buttons {
+    display: block;
+}
+@media (max-width: 450px){
+    .menu-btn {
+        display: none; /* Hide hamburger */
+    }
+    .menu-buttons {
+        display: block; /* Hide the menu by default on mobile */
+        position: static;
+        /* top: 50px; 
+        right: 0; */
+        background-color: #333;
+        width: auto;
+    }
+    .menu-buttons ul {
+        flex-direction: row; /* Horizontal links */
+    }
+
+    .menu-buttons ul li a {
+        border-top: none;
+        padding: 0.5rem 1rem;
+    }
+}
+    /* Show the hamburger icon */
+    /* .menu-icon {
+        display: block;
+        cursor: pointer;
+        font-size: 1.5rem;
+    } */
+
+    /* This is how we show the menu using the hidden checkbox trick */
+    /* When the checkbox is checked, select the general sibling (~) .nav-links */
+    /* #menu-toggle:checked ~ .menu-buttons {
+        display: block;
+    }
+
+    .menu-buttons ul li a {
+        padding: 1rem; Bigger touch targets 
+        text-align: center;
+    }
+
+    .menu-buttons ul li:hover {
+        background-color: #555;
+    }
+}*//*
 nav{
     position: sticky; 
     top: 0; 
@@ -30,62 +127,38 @@ nav{
 nav:hover{
     width: 280px; 
     transition:1s;
-}
+} */
 a{
-    position: relative; 
-    width: 280px;
-    font-size: 24px;
+    position: static; 
+    width: 100%;
+    font-size: 14px;
     color: #031049;
     display: table; 
-    padding: 10px;
+    padding-bottom: 1rem;
 }
-nav .fas{
+menu-buttons .fas{
     position: relative; 
     width: 70px;
     height: 40px;
     font-size: 20px; 
     text-align: center;
-}
-nav .fa{
-    position: relative; 
-    width: 70px;
-    height: 40px;
-    font-size: 20px; 
-    text-align: center;
-}
-nav .far{
-    position: relative; 
-    width: 70px;
-    height: 40px;
-    font-size: 20px; 
-    text-align: center;
-}
-nav-item{
-    position: relative; 
-    top: 12px; 
-    margin-left: 10px;
 }
 a:hover{
     background: #92b7ff;
     transition: 0.5s;
 }
-a:hover i{
-    color: #92b7ff;
-}
-.span{
+nav-item{
+    position: relative;
     font-weight: bold; 
     padding-left: 15px;
     font-size: 18px;
-    margin-top: 10px;
+    margin-top: 10px; 
 }
-.img{
-    width: 45px;
-    height: 45px;
-}
+/* 
 .navigation-buttons{
     display: flex;
-    margin-left: 50px;
-}
+    flex-direction: column;
+} */
 /* --- main section --- */
 header{
     text-align: center;
@@ -94,8 +167,8 @@ header{
 }
 .main{
     padding: 20px;
-    border-radius: 8px;
-    width: 80%;
+    position: relative;
+    width: 100%;
 }
 .add-buttons{
     width: 100%;
@@ -103,6 +176,21 @@ header{
     gap: 5rem;
     margin-bottom: 16px;
     justify-content: space-evenly;
+}
+.main-top{
+    display: flex; 
+    width: 80%;
+}
+.main-top i{
+    position: absolute; 
+    right: 0; 
+    margin: 10px 30px; 
+    color: #ff92ed;
+    cursor: pointer;
+}
+td{
+    font-size: 14px;
+    padding-right: 15px;
 }
 .add-class{
     padding: 8px 14px;
@@ -113,6 +201,44 @@ header{
     cursor: pointer;
     width: 30%;
     justify-content: center;
+}
+.attendence{
+    margin-top: 20px; 
+}
+.attendence-list{
+    width: 100%;
+    padding: 10px; 
+    margin-top: 10px;
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 20px 35px rgba(0,0,0,0.1);
+}
+.table{
+    border-collapse: collapse;
+    margin: 25px 0;
+    font-size: 15px;
+    min-width: 100%;
+    overflow: hidden;
+    border-radius: 5px 5px 0 0;
+}
+table thead tr{
+    color: #ffffff;
+    background: #ff92ed;
+    text-align: left;
+    font-weight: bold;
+}
+.table th, table td{
+    padding: 12px 15px;
+}
+table tbody tr{
+    border-bottom: 1px solid #dddddd;
+}
+table tbody tr:nth-of-type(even){
+    background: #f3f3f3;
+}
+table tbody tr:active{
+    font-weight: bold;
+    color: #EF4444;
 }
 .add-student{
     padding: 8px 14px;

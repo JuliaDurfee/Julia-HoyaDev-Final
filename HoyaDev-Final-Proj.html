@@ -10,43 +10,66 @@
     <script src="https://kit.fontawesome.com/98cbe76521.js" crossorigin="anonymous"></script>
 </head>
 <body>
-    <header>
-        <h1>Welcome to My Website</h1>
-        <p>Use this to take daily class attendence.</p>
-    </header>
-    <div class="naviation-buttons">
-    <nav>
-        <!--  <a href="#">Class #1</a>  -->
-          <li><a href="#">
-            <i class="far fa-calendar-alt"></i>
-            <span class="nav-item">Dashboard</span>
-          </a></li>
-          <li><a href="#">
-            <i class="far fa-edit"></i>
-            <span class="nav-item">Edit</span> <!--create at least one class/section-->
-          </a></li>
-          <li><a href="#">
-            <i class="fa fa-users"></i>
-            <span class="nav-item">See Students</span> <!-- list of students and what classes they are in (and button to add new ones) -->
-          </a></li>
-          <li><a href="#">
-            <i class="fas fa-clipboard-list"></i>
-            <span class="nav-item">Attendance</span> <!-- attendance for date -->
-          </a></li>
-          <li><a href="#">
-            <i class="fas fa-history"></i>
-            <span class="nav-item">History</span> <!-- view past attendance records -->
-          </a></li>
-        <!--<a href="#">Contact</a> -->
-        </nav>
+        <header class="menu-header">
+            <div class="logo">Attendance App</div>
+            <input type="checkbox" id="menu-toggle">
+            <label for="menu-toggle" class="menu-btn">
+                <i class="fas fa-bars"></i>
+            </label>
+            <nav class="menu-buttons">
+                <!-- <label for="menu-toggle" class="close-btn">
+                    <i class="fas fa-close"></i>
+                </label>-->
+                <ul>
+                    </li><a href="#">
+                        <i class="fas fa-edit"></i>
+                        <span class="nav-item">Add</span> <!--create at least one class/section-->
+                    </a></li>
+                    </li><a href="#">
+                        <i class="fas fa-user-alt"></i>
+                        <span class="nav-item">Students</span> <!--list of students and what classes they are in (and button to add new ones)-->
+                    </a></li>
+                    </li><a href="#">
+                        <i class="fas fa-clipboard-list"></i>
+                        <span class="nav-item">Attendance</span> <!--attendance for date -->
+                    </a></li>
+                    </li><a href="#">
+                        <i class="fas fa-history"></i>
+                        <span class="nav-item">History</span> <!--view past attendance records -->
+                    </a></li>
+                </ul>
+            </nav>
+        </header>
         <section class="main">
             <div class="main-top">
-                <h1>Dashboard</h1>
+                <h1>Attendance</h1>
                 <i class="fas fa-user-cog"></i>
             </div>
         </section>
     </div>
-    <main>
+        <!-- STUDENT LIST -->
+         <section class="attendance">
+            <div class="attendance-list">
+                <h1>Attendance List</h1>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Student Name</th>
+                        <th>ID</th>
+                        <th>Email</th>
+                        <th>Absent</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>John Doe</td>
+                            <td>Math 101</td>
+                            <td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+         </section>
         <div class="add-buttons">
             <div class="add-class">
                 <h2>Add a class</h2>
@@ -95,7 +118,6 @@
         </form>
     <ul id="student-list"></ul> -->
   <!-- </div> -->
-</main>
 
     <!-- Link JavaScript -->
     <script type="module" src="HoyaDev-Final-Proj.js" defer></script>
