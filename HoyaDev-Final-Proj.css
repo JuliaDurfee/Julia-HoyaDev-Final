@@ -1,9 +1,13 @@
 * {
-  box-sizing: border-box;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    margin: 0; 
+    padding: 0; 
+    outline: none; 
+    border: none; 
+    text-decoration: none;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
 }
 body {
-  margin: 2rem;
   background: #ffffff; 
   color: #92b7ff; 
   display: flex;
@@ -11,6 +15,78 @@ body {
   flex-wrap: wrap;
   flex-direction: column;
 }
+/* --- NAVIGATION BAR --- */
+nav{
+    position: sticky; 
+    top: 0; 
+    bottom: 0; 
+    background: #dce0f3;
+    height: auto;
+    left: 0; 
+    width: 280px; 
+    overflow: hidden; 
+    transition: 1s; 
+}
+nav:hover{
+    width: 280px; 
+    transition:1s;
+}
+a{
+    position: relative; 
+    width: 280px;
+    font-size: 24px;
+    color: #031049;
+    display: table; 
+    padding: 10px;
+}
+nav .fas{
+    position: relative; 
+    width: 70px;
+    height: 40px;
+    font-size: 20px; 
+    text-align: center;
+}
+nav .fa{
+    position: relative; 
+    width: 70px;
+    height: 40px;
+    font-size: 20px; 
+    text-align: center;
+}
+nav .far{
+    position: relative; 
+    width: 70px;
+    height: 40px;
+    font-size: 20px; 
+    text-align: center;
+}
+nav-item{
+    position: relative; 
+    top: 12px; 
+    margin-left: 10px;
+}
+a:hover{
+    background: #92b7ff;
+    transition: 0.5s;
+}
+a:hover i{
+    color: #92b7ff;
+}
+.span{
+    font-weight: bold; 
+    padding-left: 15px;
+    font-size: 18px;
+    margin-top: 10px;
+}
+.img{
+    width: 45px;
+    height: 45px;
+}
+.navigation-buttons{
+    display: flex;
+    margin-left: 50px;
+}
+/* --- main section --- */
 header{
     text-align: center;
     margin-bottom: 15px; 
@@ -67,4 +143,66 @@ button:hover {
     min-width: 160px;
     box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
     z-index: 1;
+}
+form {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+input[type="text"] {
+  flex: 1;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid #374151;
+  background: #020617;
+  color: #E5E7EB;
+}
+input[type="text"]:focus {
+  outline: none;
+  border-color: #38BDF8;
+  box-shadow: 0 0 0 1px #38BDF8;
+}
+#items-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #020617;
+  border: 1px solid #1F2937;
+  border-radius: 8px;
+  padding: 8px 10px;
+  margin-bottom: 8px;
+}
+.item-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.item-text {
+  margin: 0;
+}
+.item-text.done {
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+.item-buttons {
+  display: flex;
+  gap: 6px;
+}
+.item-buttons button {
+  padding: 4px 8px;
+  font-size: 0.8rem;
+  border-radius: 999px;
+}
+.item-buttons .delete-btn {
+  background: #EF4444;
+  color: #020617;
+}
+.item-buttons .toggle-btn {
+  background: #38BDF8;
+  color: #020617;
 }

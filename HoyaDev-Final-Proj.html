@@ -7,28 +7,54 @@
 
     <!-- Link CSS -->
     <link rel="stylesheet" href="HoyaDev-Final-Proj.css">
+    <script src="https://kit.fontawesome.com/98cbe76521.js" crossorigin="anonymous"></script>
 </head>
 <body>
-
     <header>
         <h1>Welcome to My Website</h1>
         <p>Use this to take daily class attendence.</p>
     </header>
-
+    <div class="naviation-buttons">
     <nav>
-        <!--  <a href="#">Class #1</a> 
-        <a href="#">About</a> 
-        <a href="#">Contact</a> -->
-    </nav>
-
+        <!--  <a href="#">Class #1</a>  -->
+          <li><a href="#">
+            <i class="far fa-calendar-alt"></i>
+            <span class="nav-item">Dashboard</span>
+          </a></li>
+          <li><a href="#">
+            <i class="far fa-edit"></i>
+            <span class="nav-item">Edit</span> <!--create at least one class/section-->
+          </a></li>
+          <li><a href="#">
+            <i class="fa fa-users"></i>
+            <span class="nav-item">See Students</span> <!-- list of students and what classes they are in (and button to add new ones) -->
+          </a></li>
+          <li><a href="#">
+            <i class="fas fa-clipboard-list"></i>
+            <span class="nav-item">Attendance</span> <!-- attendance for date -->
+          </a></li>
+          <li><a href="#">
+            <i class="fas fa-history"></i>
+            <span class="nav-item">History</span> <!-- view past attendance records -->
+          </a></li>
+        <!--<a href="#">Contact</a> -->
+        </nav>
+        <section class="main">
+            <div class="main-top">
+                <h1>Dashboard</h1>
+                <i class="fas fa-user-cog"></i>
+            </div>
+        </section>
+    </div>
     <main>
         <div class="add-buttons">
             <div class="add-class">
                 <h2>Add a class</h2>
-                <form id="add-form"> <!-- ADD CLASS -->
-                    <input id="new-item-input" type="text" placeholder="Add a new class..." required/>
-                    <button id="add-class-btn" type="submit">Add Class</button>
+                <form id="add-class-form"> <!-- ADD CLASS -->
+                    <input id="new-classes-input" type="text" placeholder="Add a new class..." required/>
+                    <button type="submit">Add Class</button>
                 </form>
+                 <ul id="classes-list"></ul>
             </div>
             <div class="add-student"> <!-- ADD STUDENT -->
                 <h2>Add a student</h2>
@@ -36,6 +62,7 @@
                     <input id="new-student-input" type="text" placeholder="Add a new student..." required />
                     <button type="submit">Add Student</button>
                 </form>
+                <ul id="student-list"></ul>
             </div>
         </div>
         <div class="class-list">
@@ -71,6 +98,6 @@
 </main>
 
     <!-- Link JavaScript -->
-    <script src="HoyaDev-Final-Proj.js" defer></script>
+    <script type="module" src="HoyaDev-Final-Proj.js" defer></script>
 </body>
 </html>

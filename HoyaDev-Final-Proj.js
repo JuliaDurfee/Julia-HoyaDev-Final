@@ -11,8 +11,7 @@ import {
   query,
   orderBy,
 } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-
-// 1. Firebase configuration 
+// My Firebase configuration 
 const firebaseConfig = {
   apiKey: "AIzaSyC9q_nZc9C68QGCOQUkHDLG1pgdbkt5Qa4",
   authDomain: "hoyadevfinalproject.firebaseapp.com",
@@ -22,37 +21,45 @@ const firebaseConfig = {
   appId: "1:757320480584:web:fc40e803d6fbbe15eae57d",
   measurementId: "G-7N6B17X4F6"
 };
-// 2. Initialize Firebase + Firestore
+// Initialize Firebase + Firestore
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-// 3. DOM elements
-const addForm = document.getElementById("add-form");
-const newItemInput = document.getElementById("new-item-input");
-const itemsList = document.getElementById("items-list");
-// Reference to our collection: "items"
-const itemsColRef = collection(db, "items");
-// 4. Handle Create (add new item)
-addForm.addEventListener("submit", async (e) => {
+
+
+// DOM elements
+const addClassForm = document.getElementById("add-class-form");
+const newClassInput = document.getElementById("new-classes-input");
+const classesList = document.getElementById("classes-list");
+const collectionInput = document.getElementById("collection-name-input"); // NEW: Input for collection name
+
+
+// Reference to our collection: "Computer Science" --- at least one class
+const classesColRef = collection(db, "classes");
+
+// --- CLASS CREATION ---
+addClassForm.addEventListener("submit", async (e) => {
   e.preventDefault();
-  const text = newItemInput.value.trim();
-  if (!text) return;
-  try {
-    await addDoc(itemsColRef, {
-      text,
-      done: false,
-      createdAt: serverTimestamp(),
-    });
-    newItemInput.value = "";
-  } catch (err) {
-    console.error("Error adding document: ", err);
-    alert("Error adding item, check console.");
-  }
+    const className = collectionInput.value.trim() || "classes"; // Default to 'classes' if empty
+    // const text = newClassInput.value.trim();
+    if (!text) return;
+    try {     // If className doesn't exist, Firebase creates it automatically on this line
+        const targetColRef = collection(db, className);
+        await addDoc(targetColRef, {
+            text,
+            absent: false,
+            createdAt: serverTimestamp(),
+        });
+        newClassInput.value = "";
+    } catch (err) {
+        console.error("Error adding document: ", err);
+        alert("Error adding item, check console.");
+    }
 });
 // 5. Real-time Read (listen to collection changes)
-const qItems = query(itemsColRef, orderBy("createdAt", "asc"));
+const qItems = query(classesColRef, orderBy("createdAt", "asc"));
 onSnapshot(qItems, (snapshot) => {
   // Clear the list
-  itemsList.innerHTML = "";
+  classesList.innerHTML = "";
   snapshot.forEach((docSnap) => {
     const data = docSnap.data();
     const id = docSnap.id;
@@ -60,7 +67,7 @@ onSnapshot(qItems, (snapshot) => {
   });
 });
 // 6. Render a single item (and wire up Update/Delete)
-function renderItem(id, data) {
+function renderItem(id, data, colName) {
   const li = document.createElement("li");
   li.className = "item";
   const left = document.createElement("div");
@@ -68,43 +75,28 @@ function renderItem(id, data) {
   const textP = document.createElement("p");
   textP.className = "item-text";
   textP.textContent = data.text || "";
-  if (data.done) {
-    textP.classList.add("done");
+  if (data.absent) {
+    textP.classList.add("absent");
   }
   left.appendChild(textP);
   const buttons = document.createElement("div");
   buttons.className = "item-buttons";
   const toggleBtn = document.createElement("button");
-  toggleBtn.textContent = data.done ? "Mark not done" : "Mark done";
+  toggleBtn.textContent = data.absent ? "Absent" : "not Absent";
   toggleBtn.className = "toggle-btn";
   const deleteBtn = document.createElement("button");
-  deleteBtn.textContent = "Delete";
-  deleteBtn.className = "delete-btn";
   buttons.appendChild(toggleBtn);
-  buttons.appendChild(deleteBtn);
   li.appendChild(left);
   li.appendChild(buttons);
-  itemsList.appendChild(li);
-  // Update: toggle done
+  classesList.appendChild(li);
+//   Update: toggle absent
   toggleBtn.addEventListener("click", async () => {
     try {
-      const docRef = doc(db, "items", id);
-      await updateDoc(docRef, {
-        done: !data.done,
-      });
+      const docRef = doc(db, colName, id);
+      await updateDoc(docRef, {absent: !data.absent,});
     } catch (err) {
       console.error("Error updating document: ", err);
       alert("Error updating item, check console.");
-    }
-  });
-  // Delete
-  deleteBtn.addEventListener("click", async () => {
-    try {
-      const docRef = doc(db, "items", id);
-      await deleteDoc(docRef);
-    } catch (err) {
-      console.error("Error deleting document: ", err);
-      alert("Error deleting item, check console.");
     }
   });
 }
