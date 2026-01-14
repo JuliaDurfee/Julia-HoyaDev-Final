@@ -17,14 +17,7 @@
                 <i class="fas fa-bars"></i>
             </label>
             <nav class="menu-buttons">
-                <!-- <label for="menu-toggle" class="close-btn">
-                    <i class="fas fa-close"></i>
-                </label>-->
                 <ul>
-                    </li><a href="#">
-                        <i class="fas fa-edit"></i>
-                        <span class="nav-item">Add</span> <!--create at least one class/section-->
-                    </a></li>
                     </li><a href="#">
                         <i class="fas fa-user-alt"></i>
                         <span class="nav-item">Students</span> <!--list of students and what classes they are in (and button to add new ones)-->
@@ -40,54 +33,46 @@
                 </ul>
             </nav>
         </header>
-        <section class="main">
-            <div class="main-top">
-                <h1>Attendance</h1>
-                <i class="fas fa-user-cog"></i>
-            </div>
-        </section>
-    </div>
-        <!-- STUDENT LIST -->
-         <section class="attendance">
-            <div class="attendance-list">
-                <h1>Attendance List</h1>
-                <table class="table">
-                    <thead>
-                    <tr>
-                        <th>Student Name</th>
-                        <th>ID</th>
-                        <th>Email</th>
-                        <th>Absent</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>John Doe</td>
-                            <td>Math 101</td>
-                            <td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-         </section>
         <div class="add-buttons">
             <div class="add-class">
-                <h2>Add a class</h2>
-                <form id="add-class-form"> <!-- ADD CLASS -->
+                <h2>Add a new class</h2>
+                <form id="add-class"> <!-- ADD CLASS -->
                     <input id="new-classes-input" type="text" placeholder="Add a new class..." required/>
                     <button type="submit">Add Class</button>
                 </form>
-                 <ul id="classes-list"></ul>
+                <ul id="classes-list"></ul>
             </div>
-            <div class="add-student"> <!-- ADD STUDENT -->
-                <h2>Add a student</h2>
-                <form id="add-student-form">
+            <div class="add-a-student"> <!-- ADD STUDENT -->
+                <h2>Add a new student</h2>
+                <form id="add-student">
                     <input id="new-student-input" type="text" placeholder="Add a new student..." required />
                     <button type="submit">Add Student</button>
                 </form>
                 <ul id="student-list"></ul>
             </div>
         </div>
+        <!-- CLASS LIST -->
+         <section class="classes">
+            <div class="class-list">
+                <h1>Overview of Classes:</h1>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Class Name</th>
+                        <th>Total Students</th>
+                        <th>Took Attendence </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>John Doe</td>
+                            <td>Math 101</td>
+                            <td><button id="colorButton"></button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+         </section>
         <div class="class-list">
             <h2>Today's Attendence</h2>
             <select id="classSelect"> <!-- CLASS DROPDOWN -->
