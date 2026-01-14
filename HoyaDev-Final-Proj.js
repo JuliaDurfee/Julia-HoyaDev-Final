@@ -27,38 +27,41 @@ const db = getFirestore(app);
 
 
 // DOM elements
-const addClassForm = document.getElementById("add-student");
-const newClassInput = document.getElementById("new-student-input");
-const classesList = document.getElementById("student-list");
+const addStudentForm = document.getElementById("add-student");
+const newStudentInput = document.getElementById("new-student-input");
+const studentList = document.getElementById("student-list");
+const addClassForm = document.getElementById("add-class");
+const newClassInput = document.getElementById("new-class-input");
+const classesList = document.getElementById("classes-list");
 
 
 // Reference to our collection: "Computer Science" --- at least one class
-const classesColRef = collection(db, "student");
-
+const studentsColRef = collection(db, "student");
+const classesColRef = collection(db, "classes");
 // --- CLASS CREATION ---
-addClassForm.addEventListener("submit", async (e) => {
+addStudentForm.addEventListener("submit", async (e) => {
   e.preventDefault();
-  const text = newClassInput.value.trim();
+  const text = newStudentInput.value.trim();
     // Default to 'classes' if empty
-    // const text = newClassInput.value.trim();
+    // const text = newStudentInput.value.trim();
     if (!text) return;
     try {     // If className doesn't exist, Firebase creates it automatically on this line
-        await addDoc(classesColRef, {
+        await addDoc(studentsColRef, {
             text,
             absent: false,
             createdAt: serverTimestamp(),
         });
-        newClassInput.value = "";
+        newStudentInput.value = "";
     } catch (err) {
         console.error("Error adding document: ", err);
         alert("Error adding item, check console.");
     }
 });
 // 5. Real-time Read (listen to collection changes)
-const qItems = query(classesColRef, orderBy("createdAt", "asc"));
+const qItems = query(studentsColRef, orderBy("createdAt", "asc"));
 onSnapshot(qItems, (snapshot) => {
   // Clear the list
-  classesList.innerHTML = "";
+  studentList.innerHTML = "";
   snapshot.forEach((docSnap) => {
     const data = docSnap.data();
     const id = docSnap.id;
@@ -86,7 +89,7 @@ function renderStudent(id, data) {
   buttons.appendChild(toggleBtn);
   li.appendChild(left);
   li.appendChild(buttons);
-  classesList.appendChild(li);
+  studentList.appendChild(li);
 //   Update: toggle absent
   toggleBtn.addEventListener("click", async () => {
     try {

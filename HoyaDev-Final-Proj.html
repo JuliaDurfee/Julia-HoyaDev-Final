@@ -18,15 +18,15 @@
             </label>
             <nav class="menu-buttons">
                 <ul>
-                    </li><a href="#">
+                    <li><a href="students.html">
                         <i class="fas fa-user-alt"></i>
                         <span class="nav-item">Students</span> <!--list of students and what classes they are in (and button to add new ones)-->
                     </a></li>
-                    </li><a href="#">
+                    <li><a href="attendance.html">
                         <i class="fas fa-clipboard-list"></i>
                         <span class="nav-item">Attendance</span> <!--attendance for date -->
                     </a></li>
-                    </li><a href="#">
+                    <li><a href="history.html">
                         <i class="fas fa-history"></i>
                         <span class="nav-item">History</span> <!--view past attendance records -->
                     </a></li>
@@ -41,14 +41,6 @@
                     <button type="submit">Add Class</button>
                 </form>
                 <ul id="classes-list"></ul>
-            </div>
-            <div class="add-a-student"> <!-- ADD STUDENT -->
-                <h2>Add a new student</h2>
-                <form id="add-student">
-                    <input id="new-student-input" type="text" placeholder="Add a new student..." required />
-                    <button type="submit">Add Student</button>
-                </form>
-                <ul id="student-list"></ul>
             </div>
         </div>
         <!-- CLASS LIST -->
@@ -67,43 +59,17 @@
                         <tr>
                             <td>John Doe</td>
                             <td>Math 101</td>
-                            <td><button id="colorButton"></button></td>
+                            <td>
+                                <div class="checkbox-container">
+                                <input type="checkbox" id="attendanceCheckbox">
+                                <label for="attendanceCheckbox" class="checkbox-label"></label>
+                                </div>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
          </section>
-        <div class="class-list">
-            <h2>Today's Attendence</h2>
-            <select id="classSelect"> <!-- CLASS DROPDOWN -->
-                <option value="">-- Select a Class --</option>
-            </select>
-        </div>
-
-  <!-- STUDENT LIST -->
-        <!-- <div class="ClassesSelection">
-            <div class="ClassesDropdown">
-
-                <button id="menu-toggle" class="dropbtn">Menu</button>
-                <div id="myDropdown" class="dropdown-content">
-    
-                 <div class="nested-dropdown">
-                    <button id="classes-toggle" class="DropdownButton">Classes</button>
-                    <div id="classes-content" class="nested-content">
-                        <a href="#">Class #1</a>
-                        <a href="#">Class #2</a>
-                        <a href="#">Class #3</a>
-                    </div>
-                </div>
-            </div>
-        </div> -->
-        <!-- <form id="add-form">
-            <input id="new-item-input" type="text" placeholder="Add a new student..." required/>
-            <button type="submit">Add</button>
-        </form>
-    <ul id="student-list"></ul> -->
-  <!-- </div> -->
-
     <!-- Link JavaScript -->
     <script type="module" src="HoyaDev-Final-Proj.js" defer></script>
 </body>

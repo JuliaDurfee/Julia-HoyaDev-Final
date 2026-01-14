@@ -10,10 +10,6 @@
 body {
   background: #F7F6F3; 
   color: #312520; 
-  /* display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  flex-direction: column; */
 }
 /* --- NAVIGATION BAR --- */
 .menu-header{
@@ -47,7 +43,7 @@ body {
     display: block;
 }
 #menu-toggle{
-    display:none;
+    display: none;
  }
 .menu-buttons{
     position: absolute;
@@ -55,7 +51,7 @@ body {
     left: 0;
     width:100%;
     background: #ACC5D8;
-    display:none;
+    display: none;
     justify-content: flex-start; 
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 } 
@@ -185,6 +181,7 @@ input[type="text"]:focus {
   list-style: none;
   padding: 0;
   margin: 0;
+  display: none;
 }
 .student{
   display: flex;
@@ -204,10 +201,6 @@ input[type="text"]:focus {
 .student-text {
   margin: 0;
 }
-/* .student-text.absent {
-  text-decoration: line-through;
-  opacity: 0.6;
-} */
 .student-buttons {
   display: flex;
   gap: 6px;
@@ -220,6 +213,26 @@ input[type="text"]:focus {
 .student-buttons .toggle-btn {
   background: #ffffff;
   color: #020617;
+}
+#menu-toggle:checked ~ .menu-buttons {
+    display: block;
+}
+@media (max-width: 450px){
+    .menu-btn {
+        display: none; /* Hide */
+    }
+    .menu-buttons {
+        display: block; /* Hide the menu by default */
+        position: static;
+        width: auto;
+    }
+    .menu-buttons ul {
+        flex-direction: row; /* Horizontal links */
+    }
+    .menu-buttons ul li a {
+        border-top: none;
+        padding: 5rem 5rem;
+    }
 }
 /* --- main section --- */
 header{
@@ -246,11 +259,6 @@ header{
     box-shadow: 0 20px 35px rgba(0,0,0,0.1);
     overflow: hidden;
 }
-/* .main{
-    padding: 5em;
-    position: relative;
-    width: 100%;
-} */
 .add-buttons{
     width: 100%;
     display: flex;
@@ -295,24 +303,39 @@ table thead tr{
     font-weight: bold;
     justify-content: flex-start;
 }
-.table th, table td{
+table th, table td{
     padding: 12px 15px;
 }
 table tbody tr{
     border-bottom: 1px solid #90B1CB;
+    border-left: 1px solid #90B1CB;
 }
-table tbody tr:active{
-    font-weight: bold;
-    background-color: #9EBBD1;
-}
-tr {
+.tr {
   background-color: #ffffff; /* Default background color */
-  transition: background-color 0.3s ease; /* Smooth transition for color change */
+}
+.classes table tbody tr:has(input[type="checkbox"]:checked) td {
+    background-color: #ACC5D8; /* Highlight color */
+    transition: background-color 0.3s ease;
 }
 
-/* Styles applied when the checkbox inside the row is checked */
-tr:has(input[type="checkbox"]:checked) {
-  background-color: #f0f0f0; /* New background color (e.g., light grey) */
-  /* You can add other styles here, like text color or font weight */
-  color: #333;
+/* --- students.html section --- */
+
+.student{
+    margin-top: 5em;
+    position: relative; 
+}
+.students h1{
+    font-size: 24px;
+    color:#312520;
+    margin-left: 5em;
+}
+.students-list{
+    width: 100%;
+    align-content: center;
+    padding: 10px; 
+    margin-top: 10px;
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 20px 35px rgba(0,0,0,0.1);
+    overflow: hidden;
 }
