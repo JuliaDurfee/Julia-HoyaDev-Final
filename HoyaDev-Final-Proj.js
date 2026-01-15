@@ -115,37 +115,37 @@ onSnapshot(qClasses, (snapshot) => {
 
 
 // 6. Render a single item (and wire up Update/Delete)
-function renderClass(id, data) {
-  const li = document.createElement("li");
-  li.className = "classes";
-  const left = document.createElement("div");
-  left.className = "classes-left";
-  const textP = document.createElement("p");
-  textP.className = "classes-text";
-  textP.textContent = data.text || "";
-  if (data.done) {
-    textP.classList.add("done");
-  }
-  left.appendChild(textP);
-  const buttons = document.createElement("div");
-  buttons.className = "student-buttons";
-  const toggleBtn = document.createElement("button");
-  toggleBtn.textContent = data.done ? "Took Attendance" : "Did not take attendance";
-  toggleBtn.className = "toggle-btn";
-  buttons.appendChild(toggleBtn);
-  li.appendChild(left);
-  li.appendChild(buttons);
-  classesList.appendChild(li);
-  toggleBtn.addEventListener("click", async () => {
-    try {
-      const docRef = doc(db, "classes", id);
-      await updateDoc(docRef, {done: !data.done,});
-    }catch (err) {
-      console.error("Error updating document: ", err);
-      alert("Error updating item, check console.");
-    }
-  });
-}
+// function renderClass(id, data) {
+//   const li = document.createElement("li");
+//   li.className = "classes";
+//   const left = document.createElement("div");
+//   left.className = "classes-left";
+//   const textP = document.createElement("p");
+//   textP.className = "classes-text";
+//   textP.textContent = data.text || "";
+//   if (data.done) {
+//     textP.classList.add("done");
+//   }
+//   left.appendChild(textP);
+//   const buttons = document.createElement("div");
+//   buttons.className = "student-buttons";
+//   const toggleBtn = document.createElement("button");
+//   toggleBtn.textContent = data.done ? "Took Attendance" : "Did not take attendance";
+//   toggleBtn.className = "toggle-btn";
+//   buttons.appendChild(toggleBtn);
+//   li.appendChild(left);
+//   li.appendChild(buttons);
+//   classesList.appendChild(li);
+//   toggleBtn.addEventListener("click", async () => {
+//     try {
+//       const docRef = doc(db, "classes", id);
+//       await updateDoc(docRef, {done: !data.done,});
+//     }catch (err) {
+//       console.error("Error updating document: ", err);
+//       alert("Error updating item, check console.");
+//     }
+//   });
+// }
 // function renderClass(id, data) {
 //   const li = document.createElement("li");
 //   li.className = "class";
@@ -167,3 +167,49 @@ function renderClass(id, data) {
 
 //   classesList.appendChild(li);
 // }
+
+function listenForClasses() {
+    const tableBody = document.getElementById('dataTableBody');
+    const classesCollection = collection(db, 'classes');
+
+    onSnapshot(classesCollection, (snapshot) => {
+        tableBody.innerHTML = ''; // Clear table before re-rendering
+
+        snapshot.forEach((docSnap) => {
+            const data = docSnap.data();
+            const id = docSnap.id;
+            
+            // Create the row element
+            const row = document.createElement('tr');
+            
+            // Define the HTML structure for the row
+            row.innerHTML = `
+                <td class="${data.done ? 'done' : ''}">${data.text || data.name || 'N/A'}</td>
+                <td>${data.numStudents || 'N/A'}</td>
+                <td>
+                    <label class="checkmark-container">
+                        <input type="checkbox" ${data.done ? 'checked' : ''}>
+                  <span class="checkmark"></span>
+                </td>
+            `;
+
+            // Add the toggle event listener to the button inside this row
+            const checkbox = row.querySelector('input[type="checkbox"]');
+            checkbox.addEventListener('change', async () => {
+                try {
+                    const docRef = doc(db, "classes", id);
+                    await updateDoc(docRef, { done: e.target.checked });
+                } catch (err) {
+                    console.error("Error updating status:", err);
+                }
+            });
+
+            tableBody.appendChild(row);
+        });
+    });
+}
+
+// Call the listener on page load
+listenForClasses();
+// Call the function when the page loads
+// window.onload = displayData;
