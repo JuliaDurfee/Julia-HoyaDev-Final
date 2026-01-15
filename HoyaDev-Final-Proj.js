@@ -27,77 +27,143 @@ const db = getFirestore(app);
 
 
 // DOM elements
-const addStudentForm = document.getElementById("add-student");
+const addNewStudent = document.getElementById("add-student");
 const newStudentInput = document.getElementById("new-student-input");
 const studentList = document.getElementById("student-list");
-const addClassForm = document.getElementById("add-class");
-const newClassInput = document.getElementById("new-class-input");
+
+const addNewClass = document.getElementById("add-class");
+const newClassInput = document.getElementById("new-classes-input");
 const classesList = document.getElementById("classes-list");
 
 
 // Reference to our collection: "Computer Science" --- at least one class
 const studentsColRef = collection(db, "student");
 const classesColRef = collection(db, "classes");
-// --- CLASS CREATION ---
-addStudentForm.addEventListener("submit", async (e) => {
+
+// --------- STUDENT CREATION ---------
+// addNewStudent.addEventListener("submit", async (e) => {
+//   e.preventDefault();
+//   const text = newStudentInput.value.trim();
+//     if (!text) return;
+//     try {    
+//         await addDoc(studentsColRef, {
+//             text,
+//             absent: false,
+//             createdAt: serverTimestamp(),
+//         });
+//         newStudentInput.value = "";
+//     } catch (err) {
+//         console.error("Error adding document: ", err);
+//         alert("Error adding item, check console.");
+//     }
+// });
+
+addNewClass.addEventListener("submit", async (e) => {
   e.preventDefault();
-  const text = newStudentInput.value.trim();
-    // Default to 'classes' if empty
-    // const text = newStudentInput.value.trim();
-    if (!text) return;
-    try {     // If className doesn't exist, Firebase creates it automatically on this line
-        await addDoc(studentsColRef, {
-            text,
-            absent: false,
-            createdAt: serverTimestamp(),
-        });
-        newStudentInput.value = "";
-    } catch (err) {
-        console.error("Error adding document: ", err);
-        alert("Error adding item, check console.");
-    }
+  const text = newClassInput.value.trim();
+  if (!text) return;
+  try {
+    console.log("Sending to Firebase...");
+    await addDoc(classesColRef, {
+      text,
+      done: false,
+      createdAt: serverTimestamp()
+    });
+    newClassInput.value = "";
+  } catch (err) {
+    console.error("Error adding class: ", err);
+  }
 });
+
+// async function addStudentToClass(studentName, studentID, studentEmail) {
+//   try {
+//     // Path: classes/{classId}/students/
+//     const studentRef = collection(db, "classes", classId, "students");
+//     await addDoc(studentRef, {
+//       name: studentName,
+//       studentID: studentID,
+//       email: studentEmail,
+//       joinedAt: serverTimestamp()
+//     });
+//     console.log(`Student ${studentName} added to class ${classId}`);
+//   } catch (e) {
+//     console.error("Error adding student: ", e);
+//   }
+// }
+
+
 // 5. Real-time Read (listen to collection changes)
-const qItems = query(studentsColRef, orderBy("createdAt", "asc"));
-onSnapshot(qItems, (snapshot) => {
+// const qStudent = query(studentsColRef, orderBy("createdAt", "asc"));
+// onSnapshot(qStudent, (snapshot) => {
+//   studentList.innerHTML = "";
+//   snapshot.forEach((docSnap) => {
+//     const data = docSnap.data();
+//     const id = docSnap.id;
+//     renderStudent(id, data);
+//   });
+// });
+const qClasses = query(classesColRef, orderBy("createdAt", "asc"));
+onSnapshot(qClasses, (snapshot) => {
   // Clear the list
-  studentList.innerHTML = "";
+  classesList.innerHTML = "";
   snapshot.forEach((docSnap) => {
     const data = docSnap.data();
     const id = docSnap.id;
-    renderStudent(id, data);
+    renderClass(id, data);
   });
 });
+
+
 // 6. Render a single item (and wire up Update/Delete)
-function renderStudent(id, data) {
+function renderClass(id, data) {
   const li = document.createElement("li");
-  li.className = "student";
+  li.className = "classes";
   const left = document.createElement("div");
-  left.className = "student-left";
+  left.className = "classes-left";
   const textP = document.createElement("p");
-  textP.className = "student-text";
+  textP.className = "classes-text";
   textP.textContent = data.text || "";
-  if (data.absent) {
-    textP.classList.add("absent");
+  if (data.done) {
+    textP.classList.add("done");
   }
   left.appendChild(textP);
   const buttons = document.createElement("div");
   buttons.className = "student-buttons";
   const toggleBtn = document.createElement("button");
-  toggleBtn.textContent = data.absent ? "Absent" : "not Absent";
+  toggleBtn.textContent = data.done ? "Took Attendance" : "Did not take attendance";
   toggleBtn.className = "toggle-btn";
   buttons.appendChild(toggleBtn);
   li.appendChild(left);
   li.appendChild(buttons);
-  studentList.appendChild(li);
-//   Update: toggle absent
+  classesList.appendChild(li);
   toggleBtn.addEventListener("click", async () => {
     try {
-      const docRef = doc(db, "student", id);
-      await updateDoc(docRef, {absent: !data.absent,});
+      const docRef = doc(db, "classes", id);
+      await updateDoc(docRef, {done: !data.done,});
     }catch (err) {
       console.error("Error updating document: ", err);
       alert("Error updating item, check console.");
     }
   });
 }
+// function renderClass(id, data) {
+//   const li = document.createElement("li");
+//   li.className = "class";
+//   const left = document.createElement("div");
+//   left.className = "class-left";
+//   const textP = document.createElement("p");
+//   textP.className = "class-text";
+//   textP.textContent = data.name || "";
+//   left.appendChild(textP);
+//   li.appendChild(left);  // Click listener for selecting the class
+//   li.addEventListener("click", () => {
+//     document.querySelectorAll('.class').forEach(el => el.classList.remove('active'));
+//     li.classList.add('active');
+    
+//     // Update global variable for the "Section within a Section"
+//     selectedClassId = id; 
+//     loadStudentsForClass(id);
+//   });
+
+//   classesList.appendChild(li);
+// }
