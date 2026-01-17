@@ -1,3 +1,4 @@
+console.log("app.js loaded");
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
 import {
   getFirestore,
@@ -26,7 +27,7 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 
-// DOM elements
+document.addEventListener('DOMContentLoaded', () => {
 const addNewStudent = document.getElementById("add-student");
 const newStudentInput = document.getElementById("new-student-input");
 const studentList = document.getElementById("student-list");
@@ -34,46 +35,275 @@ const studentList = document.getElementById("student-list");
 const addNewClass = document.getElementById("add-class");
 const newClassInput = document.getElementById("new-classes-input");
 const classesList = document.getElementById("classes-list");
+const classSelect = document.getElementById("class-select");
+const studentForm = document.getElementById('studentForm');
+const tableBody = document.getElementById("dataTableBody");
 
 
-// Reference to our collection: "Computer Science" --- at least one class
-const studentsColRef = collection(db, "student");
+// Reference to our collections
 const classesColRef = collection(db, "classes");
+const studentsColRef = collection(db, "student");
 
-// --------- STUDENT CREATION ---------
-// addNewStudent.addEventListener("submit", async (e) => {
-//   e.preventDefault();
-//   const text = newStudentInput.value.trim();
-//     if (!text) return;
-//     try {    
-//         await addDoc(studentsColRef, {
-//             text,
-//             absent: false,
-//             createdAt: serverTimestamp(),
-//         });
-//         newStudentInput.value = "";
-//     } catch (err) {
-//         console.error("Error adding document: ", err);
-//         alert("Error adding item, check console.");
-//     }
-// });
 
+  // ===============================
+  // PAGE 1: CLASSES TABLE PAGE
+  // ===============================
+  if (addNewClass && newClassInput && tableBody) {
 addNewClass.addEventListener("submit", async (e) => {
   e.preventDefault();
-  const text = newClassInput.value.trim();
-  if (!text) return;
+  const className = newClassInput.value.trim();
+  if (!className) return;
   try {
-    console.log("Sending to Firebase...");
     await addDoc(classesColRef, {
-      text,
+      name: className,
       done: false,
-      createdAt: serverTimestamp()
+      numStudents: 0,
+      createdAt: new Date()
     });
     newClassInput.value = "";
   } catch (err) {
     console.error("Error adding class: ", err);
   }
 });
+// function listenForClasses() {
+//   const tableBody = document.getElementById('dataTableBody');
+//    if (!tableBody) return;
+    onSnapshot(classesColRef, (snapshot) => {
+    tableBody.innerHTML = ''; 
+
+    snapshot.forEach((docSnap) => {
+      const data = docSnap.data();
+      const id = docSnap.id;
+
+            // Create the row element
+            const row = document.createElement('tr');
+            
+            // Define the HTML structure for the row
+            row.innerHTML = `
+                <td class="${data.done ? 'done' : ''}">${data.text || data.name || 'N/A'}</td>
+                <td>${data.numStudents || 'N/A'}</td>
+                <td>
+                    <label class="checkmark-container">
+                        <input type="checkbox" ${data.done ? 'checked' : ''}>
+                  <span class="checkmark"></span>
+                </td>
+            `;
+
+            // Add the toggle event listener to the button inside this row
+            const checkbox = row.querySelector('input[type="checkbox"]');
+            checkbox.addEventListener('change', async (e) => {
+                try {
+                    const docRef = doc(db, "classes", id);
+                    await updateDoc(docRef, { done: e.target.checked });
+                } catch (err) {
+                    console.error("Error updating status:", err);
+                }
+            });
+            tableBody.appendChild(row);
+        });
+    });
+  }
+  // ===============================
+  // PAGE 2: ADD STUDENT PAGE
+  // ===============================
+    if (classSelect) {
+onSnapshot(collection(db, "classes"), (snapshot) => {
+    // classesList.innerHTML = "";
+    classSelect.innerHTML = `<option value="">Select a class</option>`;
+
+    snapshot.forEach((docSnap) => {
+      const classData = docSnap.data();
+
+      // dropdown
+      const option = document.createElement("option");
+      option.value = docSnap.id;
+      option.textContent = classData.name;
+      classSelect.appendChild(option);
+
+      // UI list
+      // const li = document.createElement("li");
+      // li.className = "class";
+      // li.textContent = classData.name;
+      // if (classesList) {
+      //   classesList.appendChild(li);
+      // } else {
+      //   console.warn("Element with ID 'classes-list' not found. Cannot populate the UI list.");
+      // }
+    });
+    });
+  }
+});
+// --------- STUDENT CREATION ---------
+// addNewStudent.addEventListener("submit", async (e) => {
+//   e.preventDefault();
+//   const studentName = newStudentInput.value.trim();
+//   const activeClassId = classSelect.value;
+//     if (!studentName || !activeClassId){
+//       alert("Please enter a name and select a class.");
+//       return;
+//     }
+//   const className =
+//     classSelect.options[classSelect.selectedIndex].text;
+
+//   const student = {
+//     name: studentName,
+//     classId,
+//     className,
+//     createdAt: new Date()
+//   };
+
+//   await addDoc(collection(db, "students"), student);
+
+//   newStudentInput.value = "";  
+// });
+
+
+// const qClasses = query(classesColRef, orderBy("createdAt", "asc"));
+// onSnapshot(qClasses, (snapshot) => {
+//   // Clear the list
+//   classesList.innerHTML = "";
+//   snapshot.forEach((docSnap) => {
+//     const data = docSnap.data();
+//     const id = docSnap.id;
+//     renderClass(id, data);
+//   });
+// });
+
+
+// Call the listener on page load
+
+
+// 1. POPULATE DROPDOWN IN REAL-TIME
+// onSnapshot(collection(db, "classes"), (snapshot) => {
+//     // classesList.innerHTML = "";
+//     classSelect.innerHTML = `<option value="">Select a class</option>`;
+
+//     snapshot.forEach((doc) => {
+//       const classData = doc.data();
+
+//       const option = document.createElement("option");
+//       option.value = doc.id;
+//       option.textContent = classData.name;
+//       classSelect.appendChild(option);
+
+//       const li = document.createElement("li");
+//       li.className = "class";
+//       li.textContent = classData.name;
+//       if (classesList) {
+//         classesList.appendChild(li);
+//       } else {
+//         console.warn("Element with ID 'classes-list' not found. Cannot populate the UI list.");
+//       }
+//     });
+//   });
+
+// studentForm.addEventListener('submit', (e) => {
+//     e.preventDefault();
+    
+//     const studentName = document.getElementById('new-student-input').value;
+//     const selectedClassId = classSelect.value; // This gets the doc.id from the dropdown
+
+//     console.log(`Adding ${studentName} to class ID: ${selectedClassId}`);
+    
+//     // Here you would add the student to your 'students' collection in Firestore
+// });
+
+// listenForClasses();
+// onSnapshot(classesColRef, (snapshot) => {
+//     // Clear the dropdown and add the placeholder
+//     classSelect.innerHTML = '<option value="" disabled selected>Select a class...</option>';
+    
+//     snapshot.forEach((docSnap) => {
+//         const data = docSnap.data();
+//         const id = docSnap.id;
+        
+//         const option = document.createElement('option');
+//         option.value = id; 
+//         option.textContent = data.name || "Unnamed Class"; 
+//         classSelect.appendChild(option); // Use the variable name we defined above
+//     });
+// });
+
+
+
+// This ensures that as soon as you add a class, it appears in the dropdown.
+
+
+// 2. UPDATED STUDENT ADDITION
+// addNewStudent.addEventListener("submit", async (e) => {
+//   e.preventDefault();
+  
+//   const studentName = newStudentInput.value.trim();
+//   const selectedClassId = classDropdown.value; // Get ID from the dropdown
+
+  // if (!studentName || !selectedClassId) {
+  //   alert("Please select a class and enter a name.");
+  //   return;
+  // }
+
+  // try {
+    // Add to the subcollection of the selected class
+//     const studentSubColRef = collection(db, "classes", selectedClassId, "students");
+    
+//     await addDoc(studentSubColRef, {
+//       name: studentName,
+//       absent: false,
+//       createdAt: serverTimestamp(),
+//     });
+
+//     newStudentInput.value = "";
+//     console.log(`Student added to class: ${selectedClassId}`);
+//   } catch (err) {
+//     console.error("Error adding student: ", err);
+//   }
+// });
+// ADD 'e' HERE inside the parentheses
+// checkbox.addEventListener('change', async (e) => { 
+//     try {
+//         const docRef = doc(db, "classes", id);
+        // Now e.target.checked will work correctly
+//         await updateDoc(docRef, { done: e.target.checked });
+//     } catch (err) {
+//         console.error("Error updating status:", err);
+//     }
+// });
+
+// async function addStudentToClass(classId, studentName) {
+//   try {
+//     // Reference the specific subcollection for THIS class
+//     // Path: classes/{classId}/students
+//     const studentSubColRef = collection(db, "classes", classId, "students");
+
+//     // Add a new student document
+//     const docRef = await addDoc(studentSubColRef, {
+//       name: studentName,
+//       absent: false,
+//       createdAt: serverTimestamp()
+//     });
+
+//     console.log("Student added with ID:", docRef.id);
+//   } catch (err) {
+//     console.error("Error adding student to class:", err);
+//   }
+// }
+
+// let selectedClassId = null;
+
+// // Updated form listener for adding students
+// addNewStudent.addEventListener("submit", async (e) => {
+//   e.preventDefault();
+//   const name = newStudentInput.value.trim();
+
+//   if (!name) return;
+//   if (!selectedClassId) {
+//     alert("Please select a class from the list first!");
+//     return;
+//   }
+
+//   // Call the function with the active class ID
+//   await addStudentToClass(selectedClassId, name);
+//   newStudentInput.value = "";
+// });
 
 // async function addStudentToClass(studentName, studentID, studentEmail) {
 //   try {
@@ -102,16 +332,16 @@ addNewClass.addEventListener("submit", async (e) => {
 //     renderStudent(id, data);
 //   });
 // });
-const qClasses = query(classesColRef, orderBy("createdAt", "asc"));
-onSnapshot(qClasses, (snapshot) => {
-  // Clear the list
-  classesList.innerHTML = "";
-  snapshot.forEach((docSnap) => {
-    const data = docSnap.data();
-    const id = docSnap.id;
-    renderClass(id, data);
-  });
-});
+// const qClasses = query(classesColRef, orderBy("createdAt", "asc"));
+// onSnapshot(qClasses, (snapshot) => {
+//   // Clear the list
+//   classesList.innerHTML = "";
+//   snapshot.forEach((docSnap) => {
+//     const data = docSnap.data();
+//     const id = docSnap.id;
+//     renderClass(id, data);
+//   });
+// });
 
 
 // 6. Render a single item (and wire up Update/Delete)
@@ -167,49 +397,3 @@ onSnapshot(qClasses, (snapshot) => {
 
 //   classesList.appendChild(li);
 // }
-
-function listenForClasses() {
-    const tableBody = document.getElementById('dataTableBody');
-    const classesCollection = collection(db, 'classes');
-
-    onSnapshot(classesCollection, (snapshot) => {
-        tableBody.innerHTML = ''; // Clear table before re-rendering
-
-        snapshot.forEach((docSnap) => {
-            const data = docSnap.data();
-            const id = docSnap.id;
-            
-            // Create the row element
-            const row = document.createElement('tr');
-            
-            // Define the HTML structure for the row
-            row.innerHTML = `
-                <td class="${data.done ? 'done' : ''}">${data.text || data.name || 'N/A'}</td>
-                <td>${data.numStudents || 'N/A'}</td>
-                <td>
-                    <label class="checkmark-container">
-                        <input type="checkbox" ${data.done ? 'checked' : ''}>
-                  <span class="checkmark"></span>
-                </td>
-            `;
-
-            // Add the toggle event listener to the button inside this row
-            const checkbox = row.querySelector('input[type="checkbox"]');
-            checkbox.addEventListener('change', async () => {
-                try {
-                    const docRef = doc(db, "classes", id);
-                    await updateDoc(docRef, { done: e.target.checked });
-                } catch (err) {
-                    console.error("Error updating status:", err);
-                }
-            });
-
-            tableBody.appendChild(row);
-        });
-    });
-}
-
-// Call the listener on page load
-listenForClasses();
-// Call the function when the page loads
-// window.onload = displayData;

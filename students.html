@@ -28,8 +28,15 @@
     <div class="add-buttons">
         <div class="add-a-student"> <!-- ADD STUDENT -->
             <h2>Add a new student</h2>
-            <form id="add-student">
-                <input id="new-student-input" type="text" placeholder="Add a new student..." required />
+            <form id="studentForm">
+                <input id="new-student-input" type="text" placeholder="Add a new student..." required/>
+                <div class="dropdown-container">
+                <select id="class-select" required>
+                    <option value="">Select a class...</option>
+                </select>
+                <ul id="new-classes-display-list"></ul>
+                </div>
+                <!-- <input id="new-student-input" type="text" placeholder="Add a new student..." required /> -->
                 <button type="submit">Add Student</button>
             </form>
             <ul id="student-list"></ul>

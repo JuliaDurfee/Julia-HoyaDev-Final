@@ -315,3 +315,13 @@ table tbody tr{
     box-shadow: 0 20px 35px rgba(0,0,0,0.1);
     overflow: hidden;
 }
+select {
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #312520;
+  background: white;
+  flex: 1; /* Makes it match your input styling */
+}
+#class-select{
+ color: #312520;
+}
