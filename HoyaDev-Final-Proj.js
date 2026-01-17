@@ -38,6 +38,8 @@ const classesList = document.getElementById("classes-list");
 const classSelect = document.getElementById("class-select");
 const studentForm = document.getElementById('studentForm');
 const tableBody = document.getElementById("dataTableBody");
+const studentTableBody = document.getElementById("studentTableBody");
+
 
 
 // Reference to our collections
@@ -107,7 +109,7 @@ addNewClass.addEventListener("submit", async (e) => {
   // PAGE 2: ADD STUDENT PAGE
   // ===============================
     if (classSelect) {
-onSnapshot(collection(db, "classes"), (snapshot) => {
+    onSnapshot(collection(db, "classes"), (snapshot) => {
     // classesList.innerHTML = "";
     classSelect.innerHTML = `<option value="">Select a class</option>`;
 
@@ -119,19 +121,77 @@ onSnapshot(collection(db, "classes"), (snapshot) => {
       option.value = docSnap.id;
       option.textContent = classData.name;
       classSelect.appendChild(option);
-
-      // UI list
-      // const li = document.createElement("li");
-      // li.className = "class";
-      // li.textContent = classData.name;
-      // if (classesList) {
-      //   classesList.appendChild(li);
-      // } else {
-      //   console.warn("Element with ID 'classes-list' not found. Cannot populate the UI list.");
-      // }
     });
     });
   }
+  if (studentForm && newStudentInput && classSelect) {
+    studentForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const studentName = newStudentInput.value.trim();
+      const selectedClassId = classSelect.value;
+
+      if (!studentName || !selectedClassId) {
+        alert("Please enter a student name and select a class.");
+        return;
+      }
+
+      try {
+        // Get the class name from the dropdown
+        const className = classSelect.options[classSelect.selectedIndex].text;
+
+        // Add student to Firestore
+        await addDoc(studentsColRef, {
+          name: studentName,
+          classId: selectedClassId,
+          className: className,
+          absent: false,
+          createdAt: new Date()
+        });
+
+        // Increment numStudents in the class
+        const classDocRef = doc(db, "classes", selectedClassId);
+        await updateDoc(classDocRef, {
+          numStudents: increment(1)
+        });
+
+        newStudentInput.value = "";
+        classSelect.value = "";
+        console.log(`Student "${studentName}" added to class "${className}"`);
+      } catch (err) {
+        console.error("Error adding student:", err);
+      }
+    });
+  }
+if (studentTableBody) {
+onSnapshot(studentsColRef, (snapshot) => {
+    studentTableBody.innerHTML = '';
+
+    snapshot.forEach((docSnap) => {
+      const data = docSnap.data();
+      const id = docSnap.id;
+            let addedAt = 'N/A'; // default
+
+      if (data.createdAt) {
+    if (data.createdAt.seconds) {
+      // Firestore Timestamp
+      addedAt = new Date(data.createdAt.seconds * 1000).toLocaleString();
+    } else {
+      // JS Date object
+      addedAt = new Date(data.createdAt).toLocaleString();
+    }
+  }
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${data.name || 'N/A'}</td>
+        <td>${data.className || 'N/A'}</td>
+        <td>${addedAt}</td>
+      `;
+
+      studentTableBody.appendChild(row);
+    });
+  });
+}
 });
 // --------- STUDENT CREATION ---------
 // addNewStudent.addEventListener("submit", async (e) => {
