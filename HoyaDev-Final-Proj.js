@@ -1,4 +1,3 @@
-console.log("app.js loaded");
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
 import {
   getFirestore,
@@ -11,6 +10,7 @@ import {
   serverTimestamp,
   query,
   orderBy,
+  increment,
 } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 // My Firebase configuration 
 const firebaseConfig = {
@@ -73,17 +73,16 @@ addNewClass.addEventListener("submit", async (e) => {
     onSnapshot(classesColRef, (snapshot) => {
     tableBody.innerHTML = ''; 
 
-    snapshot.forEach((docSnap) => {
+    snapshot.forEach(async (docSnap) => {
       const data = docSnap.data();
       const id = docSnap.id;
 
             // Create the row element
             const row = document.createElement('tr');
-            
             // Define the HTML structure for the row
             row.innerHTML = `
                 <td class="${data.done ? 'done' : ''}">${data.text || data.name || 'N/A'}</td>
-                <td>${data.numStudents || 'N/A'}</td>
+                <td>${data.numStudents ?? 0}</td>
                 <td>
                     <label class="checkmark-container">
                         <input type="checkbox" ${data.done ? 'checked' : ''}>
@@ -157,7 +156,6 @@ addNewClass.addEventListener("submit", async (e) => {
 
         newStudentInput.value = "";
         classSelect.value = "";
-        console.log(`Student "${studentName}" added to class "${className}"`);
       } catch (err) {
         console.error("Error adding student:", err);
       }
@@ -166,7 +164,6 @@ addNewClass.addEventListener("submit", async (e) => {
 if (studentTableBody) {
 onSnapshot(studentsColRef, (snapshot) => {
     studentTableBody.innerHTML = '';
-
     snapshot.forEach((docSnap) => {
       const data = docSnap.data();
       const id = docSnap.id;
@@ -185,12 +182,15 @@ onSnapshot(studentsColRef, (snapshot) => {
       row.innerHTML = `
         <td>${data.name || 'N/A'}</td>
         <td>${data.className || 'N/A'}</td>
-        <td>${addedAt}</td>
       `;
-
       studentTableBody.appendChild(row);
     });
   });
+}
+async function countStudentsInClass(classId) {
+  const q = query(studentsColRef, where("classId", "==", classId));
+  const snapshot = await getDocs(q);
+  return snapshot.size; // number of students
 }
 });
 // --------- STUDENT CREATION ---------
