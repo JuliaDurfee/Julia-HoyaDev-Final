@@ -149,7 +149,8 @@ if (studentForm && newStudentInput && classSelect) {
   });
 }
 if (studentTableBody) {
-  onSnapshot(studentsColRef, (snapshot) => {
+  const q = query(studentsColRef, orderBy("name", "asc"));
+  onSnapshot(q, (snapshot) => {
     studentTableBody.innerHTML = '';
     snapshot.forEach((docSnap) => {
       const data = docSnap.data();
@@ -257,61 +258,52 @@ if (pastClassSelect) {
   });
 }
 if(pastAttendanceBody){
-onSnapshot(studentsColRef, snapshot => {
-  studentAttendanceBody.innerHTML = "";
-  snapshot.forEach(docSnap => {
-    const data = docSnap.data();
-    const row = document.createElement('tr');
+  onSnapshot(studentsColRef, snapshot => {
+    studentAttendanceBody.innerHTML = "";
+    snapshot.forEach(docSnap => {
+      const data = docSnap.data();
+      const row = document.createElement('tr');
+      const nameCell = document.createElement('td');
+      nameCell.textContent = data.name;
+      row.appendChild(nameCell);
+      const today = new Date().toISOString().split('T')[0];
+      const pastDates = Object.keys(data.attendance || {}).sort();
 
-    const nameCell = document.createElement('td');
-    nameCell.textContent = data.name;
-    row.appendChild(nameCell);
-
-    const today = new Date().toISOString().split('T')[0];
-    const pastDates = Object.keys(data.attendance || {}).sort();
-
-    pastDates.forEach(date => {
-      const cell = document.createElement('td');
-      cell.textContent = data.attendance[date] ? 'Present' : 'Absent';
-      row.appendChild(cell);
+      pastDates.forEach(date => {
+        const cell = document.createElement('td');
+        cell.textContent = data.attendance[date] ? 'Present' : 'Absent';
+        row.appendChild(cell);
+      });
+      studentAttendanceBody.appendChild(row);
     });
-
-    studentAttendanceBody.appendChild(row);
   });
-});
 }
 if(loadPastBtn){
-loadPastBtn.addEventListener("click", async () => {
-  const classId = pastClassSelect.value;
-  const selectedDate = pastDateSelect.value; // format: "YYYY-MM-DD"
-  if (!classId || !selectedDate) {
-    alert("Please select a class and a date");
-    return;
-  }
-  pastAttendanceBody.innerHTML = "";
-
-  // Get all students in that class
-  const studentsColRef = collection(db, "students");
-  const q = query(studentsColRef, where("classId", "==", classId));
-  const studentSnap = await getDocs(q);
-
-  // For each student, get attendance for the selected date
-  for (const studentDoc of studentSnap.docs) {
-    const studentData = studentDoc.data();
-    const studentId = studentDoc.id;
-
-    const attendanceDocRef = doc(db, "students", studentId, "attendance", selectedDate);
-    const attendanceSnap = await getDoc(attendanceDocRef);
-    const present = attendanceSnap.exists() ? attendanceSnap.data().present : false;
-
-    const row = document.createElement("tr");
-    row.innerHTML = `
-      <td>${studentData.name}</td>
-      <td>${studentData.className}</td>
-      <td>${present ? "Yes" : "No"}</td>
-    `;
-    pastAttendanceBody.appendChild(row);
-  }
-});
+  loadPastBtn.addEventListener("click", async () => {
+    const classId = pastClassSelect.value;
+    const selectedDate = pastDateSelect.value; // format: "YYYY-MM-DD"
+    if (!classId || !selectedDate) {
+      alert("Please select a class and a date");
+      return;
+    }
+    pastAttendanceBody.innerHTML = "";
+    const studentsColRef = collection(db, "students");
+    const q = query(studentsColRef, where("classId", "==", classId));
+    const studentSnap = await getDocs(q);
+    for (const studentDoc of studentSnap.docs) {
+      const studentData = studentDoc.data();
+      const studentId = studentDoc.id;
+      const attendanceDocRef = doc(db, "students", studentId, "attendance", selectedDate);
+      const attendanceSnap = await getDoc(attendanceDocRef);
+      const present = attendanceSnap.exists() ? attendanceSnap.data().present : false;
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${studentData.name}</td>
+        <td>${studentData.className}</td>
+        <td>${present ? "Yes" : "No"}</td>
+      `;
+      pastAttendanceBody.appendChild(row);
+    }
+  });
 }
 });
