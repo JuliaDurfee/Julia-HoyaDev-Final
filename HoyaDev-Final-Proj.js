@@ -192,10 +192,11 @@ if (attendanceClassSelect && studentAttendanceBody && loadStudentsBtn) {
       return;
     }
     const today = new Date().toISOString().split("T")[0]; // "2026-01-18"
-    const q = query(studentsColRef, where("classId", "==", classId));
+    const q = query(studentsColRef, where("classId", "==", classId), orderBy("name", "asc"));
     const studentSnap = await getDocs(q);
     studentAttendanceBody.innerHTML = "";
-    studentSnap.forEach(async (docSnap) => {
+
+    const rows = await Promise.all(studentSnap.docs.map(async (docSnap) => {
         const data = docSnap.data();
         const id = docSnap.id;
         const attendanceDocRef = doc(db, "students", id, "attendance", today);
@@ -214,14 +215,15 @@ if (attendanceClassSelect && studentAttendanceBody && loadStudentsBtn) {
           try {
             await setDoc(attendanceDocRef, { 
               present: checkbox.checked, 
-              // merge: true
+              merge: true
             });
           } catch (err) {
             console.error("Error marking attendance:", err);
           }
         });
-        studentAttendanceBody.appendChild(row);
-      });
+        return row;
+      }));
+      rows.forEach(row => studentAttendanceBody.appendChild(row));
     });
 }
 if (tookAttendanceBtn && attendanceClassSelect) {
@@ -287,10 +289,9 @@ if(loadPastBtn){
       return;
     }
     pastAttendanceBody.innerHTML = "";
-    const studentsColRef = collection(db, "students");
-    const q = query(studentsColRef, where("classId", "==", classId));
+    const q = query(studentsColRef, where("classId", "==", classId), orderBy("name", "asc"));
     const studentSnap = await getDocs(q);
-    for (const studentDoc of studentSnap.docs) {
+    const rows = await Promise.all(studentSnap.docs.map(async (studentDoc) => {
       const studentData = studentDoc.data();
       const studentId = studentDoc.id;
       const attendanceDocRef = doc(db, "students", studentId, "attendance", selectedDate);
@@ -302,8 +303,9 @@ if(loadPastBtn){
         <td>${studentData.className}</td>
         <td>${present ? "Yes" : "No"}</td>
       `;
-      pastAttendanceBody.appendChild(row);
-    }
+      return row;
+  }));
+   rows.forEach(row => pastAttendanceBody.appendChild(row));
   });
 }
 });
