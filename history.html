@@ -25,31 +25,35 @@
             </ul>
         </nav>
     </header>
-
-  <div class="attendance-section">
-        <div class="add-buttons">
-    <label for="pastClassSelect">Select Class:</label>
-    <select id="pastClassSelect">
-      <option value="">Select a class</option>
-    </select>
+    <div class="add-buttons">
+        <div class="attendance-section">
+            <div class="past-class-section">
+                <label for="pastClassSelect">Select Class:</label>
+                <select id="pastClassSelect">
+                    <option value="">Select a class</option>
+                </select>
+            </div>
+            <div class="past-date-section">
+                <label for="pastDateSelect">Select Date:</label>
+                <input type="date" id="pastDateSelect">
+            </div>
+             <button id="loadPastBtn">Load Attendance</button>
+        </div>
     </div>
-    <label for="pastDateSelect">Select Date:</label>
-    <input type="date" id="pastDateSelect">
-
-    <button id="loadPastBtn">Load Attendance</button>
-
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Student Name</th>
-          <th>Class Name</th>
-          <th>Present</th>
-        </tr>
-      </thead>
-      <tbody id="pastAttendanceBody"></tbody>
-    </table>
-  </div>
-
-  <script type="module" src="HoyaDev-Final-Proj.js"></script>
-</body>
+    <section class="history">
+        <div class="history-list">
+            <table class="table">
+            <thead>
+                <tr>
+                <th>Student Name</th>
+                <th>Class Name</th>
+                <th>Present</th>
+                </tr>
+            </thead>
+            <tbody id="pastAttendanceBody"></tbody>
+            </table>
+        </div>
+    </section>
+    <script type="module" src="HoyaDev-Final-Proj.js"></script>
+    </body>
 </html>

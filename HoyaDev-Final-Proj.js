@@ -261,7 +261,7 @@ if (pastClassSelect) {
 }
 if(pastAttendanceBody){
   onSnapshot(studentsColRef, snapshot => {
-    studentAttendanceBody.innerHTML = "";
+    pastAttendanceBody.innerHTML = "";
     snapshot.forEach(docSnap => {
       const data = docSnap.data();
       const row = document.createElement('tr');
@@ -276,7 +276,7 @@ if(pastAttendanceBody){
         cell.textContent = data.attendance[date] ? 'Present' : 'Absent';
         row.appendChild(cell);
       });
-      studentAttendanceBody.appendChild(row);
+      pastAttendanceBody.appendChild(row);
     });
   });
 }
@@ -308,4 +308,18 @@ if(loadPastBtn){
    rows.forEach(row => pastAttendanceBody.appendChild(row));
   });
 }
+
+  // ===============================
+  // DISPLAY THE DATE
+  // ===============================
+const today = new Date();
+  const yyyy = today.getFullYear();
+  const mm = String(today.getMonth() + 1).padStart(2, '0'); // months are 0-indexed
+  const dd = String(today.getDate()).padStart(2, '0');
+  const formattedDate = `${yyyy}-${mm}-${dd}`;
+  const currentDateSpan = document.getElementById("currentDate");
+  const currentDateH3 = document.getElementById("current-date");
+  if (currentDateH3) {
+    currentDateH3.textContent = `Attendance for ${formattedDate}`;
+  }
 });
