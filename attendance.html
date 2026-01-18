@@ -28,20 +28,21 @@
     <div class="attendance-section">
         <h1>Student Attendance</h1>
         <div class="add-buttons">
-            <label for="class-select">Select Class:</label>
-            <select id="class-select">
+            <label for="attendanceClassSelect">Select Class:</label>
+            <select id="attendanceClassSelect">
                 <option value="">Select a class</option>
             </select>
-            <!-- <button type="submit">Go</button> -->
+           <button id="load-students-btn">Load Students</button>
         </div>
         <table  class="table">
             <thead>
                 <tr>
                     <th>Student Name</th>
+                    <th>Class Name</th>
                     <th>Present</th>
                 </tr>
             </thead>
-            <tbody id="studentTableBody"></tbody>
+            <tbody id="classStudentsTableBody"></tbody>
         </table>
     </div>
 </body>

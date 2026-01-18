@@ -11,6 +11,7 @@ import {
   query,
   orderBy,
   increment,
+  where,
 } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 // My Firebase configuration 
 const firebaseConfig = {
@@ -40,10 +41,10 @@ const classSelect = document.getElementById("class-select");
 
 const classTableBody = document.getElementById("dataTableBody");
 const studentTableBody = document.getElementById("studentTableBody");
-// const studentAttendanceBody = document.getElementById("student-attendance-table-body");
+const studentAttendanceBody = document.getElementById("classStudentsTableBody");
 
-const classAttendanceDropdown = document.getElementById("class-select-attendance")
-
+const attendanceClassSelect = document.getElementById("attendanceClassSelect"); // separate dropdown for attendance
+const loadStudentsBtn = document.getElementById("load-students-btn");
 // Reference to collections
 const classesColRef = collection(db, "classes");
 const studentsColRef = collection(db, "students");
@@ -146,17 +147,6 @@ if (studentTableBody) {
     snapshot.forEach((docSnap) => {
       const data = docSnap.data();
       const id = docSnap.id;
-  //           let addedAt = 'N/A'; // default
-
-  //     if (data.createdAt) {
-  //   if (data.createdAt.seconds) {
-  //     // Firestore Timestamp
-  //     addedAt = new Date(data.createdAt.seconds * 1000).toLocaleString();
-  //   } else {
-  //     // JS Date object
-  //     addedAt = new Date(data.createdAt).toLocaleString();
-  //   }
-  // }
       const row = document.createElement("tr");
       row.innerHTML = `
         <td>${data.name || 'N/A'}</td>
@@ -175,35 +165,41 @@ async function countStudentsInClass(classId) {
   // ===============================
   // PAGE 3: ATTENDANCE PAGE
   // ===============================
-if (classAttendanceDropdown) {
+let unsubscribeStudents = null;
+if (attendanceClassSelect && studentAttendanceBody && loadStudentsBtn) {
   onSnapshot(classesColRef, (snapshot) => {
-    classAttendanceDropdown.innerHTML = `<option value="">Select a class</option>`;
+    attendanceClassSelect.innerHTML = `<option value="">Select a class</option>`;
     snapshot.forEach((docSnap) => {
       const option = document.createElement("option");
       option.value = docSnap.id;
       option.textContent = docSnap.data().name;
-      classAttendanceDropdown.appendChild(option);
+      attendanceClassSelect.appendChild(option);
     });
   });
-}
-let unsubscribeStudents = null;
-if (classSelect && studentTableBody) {
-  classSelect.addEventListener("change", () => {
-    const classId = classSelect.value;
+
+  // Load students when the button is clicked
+  loadStudentsBtn.addEventListener("click", () => {
+    const classId = attendanceClassSelect.value;
+
     if (unsubscribeStudents) {
-      unsubscribeStudents();
+      unsubscribeStudents(); // detach previous listener
       unsubscribeStudents = null;
     }
+
     if (!classId) {
-      studentTableBody.innerHTML = "";
+      studentAttendanceBody.innerHTML = "";
       return;
     }
+
     const q = query(studentsColRef, where("classId", "==", classId));
+
     unsubscribeStudents = onSnapshot(q, (snapshot) => {
-      studentTableBody.innerHTML = "";
+      studentAttendanceBody.innerHTML = "";
+
       snapshot.forEach((docSnap) => {
         const data = docSnap.data();
         const id = docSnap.id;
+
         const row = document.createElement("tr");
         row.innerHTML = `
           <td>${data.name}</td>
@@ -212,6 +208,8 @@ if (classSelect && studentTableBody) {
             <input type="checkbox" ${data.present ? "checked" : ""} />
           </td>
         `;
+
+        // Update attendance when checkbox is clicked
         const checkbox = row.querySelector("input[type='checkbox']");
         checkbox.addEventListener("change", async () => {
           try {
@@ -220,7 +218,8 @@ if (classSelect && studentTableBody) {
             console.error("Error updating attendance:", err);
           }
         });
-      studentTableBody.appendChild(row);
+
+        studentAttendanceBody.appendChild(row);
       });
     });
   });
