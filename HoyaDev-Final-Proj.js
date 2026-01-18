@@ -42,9 +42,10 @@ const classSelect = document.getElementById("class-select");
 const classTableBody = document.getElementById("dataTableBody");
 const studentTableBody = document.getElementById("studentTableBody");
 const studentAttendanceBody = document.getElementById("classStudentsTableBody");
-
 const attendanceClassSelect = document.getElementById("attendanceClassSelect"); // separate dropdown for attendance
 const loadStudentsBtn = document.getElementById("load-students-btn");
+const tookAttendanceBtn = document.getElementById("took-attendance-btn");
+
 // Reference to collections
 const classesColRef = collection(db, "classes");
 const studentsColRef = collection(db, "students");
@@ -180,26 +181,20 @@ if (attendanceClassSelect && studentAttendanceBody && loadStudentsBtn) {
   // Load students when the button is clicked
   loadStudentsBtn.addEventListener("click", () => {
     const classId = attendanceClassSelect.value;
-
     if (unsubscribeStudents) {
       unsubscribeStudents(); // detach previous listener
       unsubscribeStudents = null;
     }
-
     if (!classId) {
       studentAttendanceBody.innerHTML = "";
       return;
     }
-
     const q = query(studentsColRef, where("classId", "==", classId));
-
     unsubscribeStudents = onSnapshot(q, (snapshot) => {
       studentAttendanceBody.innerHTML = "";
-
       snapshot.forEach((docSnap) => {
         const data = docSnap.data();
         const id = docSnap.id;
-
         const row = document.createElement("tr");
         row.innerHTML = `
           <td>${data.name}</td>
@@ -208,8 +203,6 @@ if (attendanceClassSelect && studentAttendanceBody && loadStudentsBtn) {
             <input type="checkbox" ${data.present ? "checked" : ""} />
           </td>
         `;
-
-        // Update attendance when checkbox is clicked
         const checkbox = row.querySelector("input[type='checkbox']");
         checkbox.addEventListener("change", async () => {
           try {
@@ -218,10 +211,29 @@ if (attendanceClassSelect && studentAttendanceBody && loadStudentsBtn) {
             console.error("Error updating attendance:", err);
           }
         });
-
         studentAttendanceBody.appendChild(row);
       });
     });
+  });
+}
+if (tookAttendanceBtn && attendanceClassSelect) {
+  tookAttendanceBtn.addEventListener("click", async () => {
+    const classId = attendanceClassSelect.value;
+    if (!classId) {
+      alert("Please select a class first");
+      return;
+    }
+    try {
+      // Update the class to mark attendance done
+      const classDocRef = doc(db, "classes", classId);
+      await updateDoc(classDocRef, {
+        done: true,
+        lastAttendanceDate: new Date()
+      });
+      alert("Attendance recorded!");
+    } catch (err) {
+      console.error("Error marking attendance:", err);
+    }
   });
 }
 });
