@@ -32,13 +32,13 @@ const db = getFirestore(app);
 
 
 document.addEventListener('DOMContentLoaded', () => {
-const addNewStudent = document.getElementById("add-student");
-const newStudentInput = document.getElementById("new-student-input");
-const studentForm = document.getElementById('studentForm');
-
 const addNewClass = document.getElementById("add-class");
 const newClassInput = document.getElementById("new-classes-input");
 const classSelect = document.getElementById("class-select");
+
+const addNewStudent = document.getElementById("add-student");
+const newStudentInput = document.getElementById("new-student-input");
+const studentForm = document.getElementById('studentForm');
 
 const classTableBody = document.getElementById("dataTableBody");
 const studentTableBody = document.getElementById("studentTableBody");
@@ -256,8 +256,9 @@ if (pastClassSelect) {
     });
   });
 }
+if(pastAttendanceBody){
 onSnapshot(studentsColRef, snapshot => {
-  studentAttendanceBody.innerHTML = '';
+  studentAttendanceBody.innerHTML = "";
   snapshot.forEach(docSnap => {
     const data = docSnap.data();
     const row = document.createElement('tr');
@@ -278,14 +279,15 @@ onSnapshot(studentsColRef, snapshot => {
     studentAttendanceBody.appendChild(row);
   });
 });
+}
+if(loadPastBtn){
 loadPastBtn.addEventListener("click", async () => {
   const classId = pastClassSelect.value;
   const selectedDate = pastDateSelect.value; // format: "YYYY-MM-DD"
   if (!classId || !selectedDate) {
     alert("Please select a class and a date");
     return;
-}
-
+  }
   pastAttendanceBody.innerHTML = "";
 
   // Get all students in that class
@@ -311,4 +313,5 @@ loadPastBtn.addEventListener("click", async () => {
     pastAttendanceBody.appendChild(row);
   }
 });
+}
 });
