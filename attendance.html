@@ -26,14 +26,17 @@
         </nav>
     </header>
     <div class="attendance-section">
-        <h1>Student Attendance</h1>
         <div class="add-buttons">
-            <label for="attendanceClassSelect">Select Class:</label>
+            <div class="attendance-date">
+                <strong>Attendance for</strong> <span id="currentDate"></span>
+            </div>
+            <label for="attendanceClassSelect"></label>
             <select id="attendanceClassSelect">
                 <option value="">Select a class</option>
             </select>
            <button id="load-students-btn">Load Students</button>
         </div>
+        <h3 id="current-date"></h3>
         <table  class="table">
             <thead>
                 <tr>
@@ -46,7 +49,6 @@
         </table>
     <button id="took-attendance-btn">Took Attendance</button>
     </div>
-</body>
  <script type="module" src="HoyaDev-Final-Proj.js"></script>
 </body>
 </html>

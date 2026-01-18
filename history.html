@@ -25,10 +25,31 @@
             </ul>
         </nav>
     </header>
-    <div class="date-select">
-            <h2>Select Date</h2>
-            <select id="classSelect"> <!-- CLASS DROPDOWN -->
-                <option value="">-- Select a Date --</option>
-            </select>
-        </div>
+    <body>
+
+  <div class="attendance-section">
+        <div class="add-buttons">
+    <label for="pastClassSelect">Select Class:</label>
+    <select id="pastClassSelect">
+      <option value="">Select a class</option>
+    </select>
+    </div>
+    <label for="pastDateSelect">Select Date:</label>
+    <input type="date" id="pastDateSelect">
+
+    <button id="loadPastBtn">Load Attendance</button>
+
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Student Name</th>
+          <th>Class Name</th>
+          <th>Present</th>
+        </tr>
+      </thead>
+      <tbody id="pastAttendanceBody"></tbody>
+    </table>
+  </div>
+
+  <script type="module" src="HoyaDev-Final-Proj.js"></script>
 </body>

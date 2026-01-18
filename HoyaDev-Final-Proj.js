@@ -3,9 +3,12 @@ import {
   getFirestore,
   collection,
   addDoc,
+  getDocs,
+  getDoc,
+  setDoc,
+  updateDoc,
   onSnapshot,
   doc,
-  updateDoc,
   deleteDoc,
   serverTimestamp,
   query,
@@ -31,12 +34,10 @@ const db = getFirestore(app);
 document.addEventListener('DOMContentLoaded', () => {
 const addNewStudent = document.getElementById("add-student");
 const newStudentInput = document.getElementById("new-student-input");
-// const studentList = document.getElementById("student-list");
 const studentForm = document.getElementById('studentForm');
 
 const addNewClass = document.getElementById("add-class");
 const newClassInput = document.getElementById("new-classes-input");
-// const classesList = document.getElementById("classes-list");
 const classSelect = document.getElementById("class-select");
 
 const classTableBody = document.getElementById("dataTableBody");
@@ -45,6 +46,11 @@ const studentAttendanceBody = document.getElementById("classStudentsTableBody");
 const attendanceClassSelect = document.getElementById("attendanceClassSelect"); // separate dropdown for attendance
 const loadStudentsBtn = document.getElementById("load-students-btn");
 const tookAttendanceBtn = document.getElementById("took-attendance-btn");
+
+const pastClassSelect = document.getElementById("pastClassSelect");
+const pastDateSelect = document.getElementById("pastDateSelect");
+const loadPastBtn = document.getElementById("loadPastBtn");
+const pastAttendanceBody = document.getElementById("pastAttendanceBody");
 
 // Reference to collections
 const classesColRef = collection(db, "classes");
@@ -166,8 +172,7 @@ async function countStudentsInClass(classId) {
   // ===============================
   // PAGE 3: ATTENDANCE PAGE
   // ===============================
-let unsubscribeStudents = null;
-if (attendanceClassSelect && studentAttendanceBody && loadStudentsBtn) {
+if (attendanceClassSelect) {
   onSnapshot(classesColRef, (snapshot) => {
     attendanceClassSelect.innerHTML = `<option value="">Select a class</option>`;
     snapshot.forEach((docSnap) => {
@@ -177,44 +182,46 @@ if (attendanceClassSelect && studentAttendanceBody && loadStudentsBtn) {
       attendanceClassSelect.appendChild(option);
     });
   });
-
-  // Load students when the button is clicked
-  loadStudentsBtn.addEventListener("click", () => {
+}
+if (attendanceClassSelect && studentAttendanceBody && loadStudentsBtn) {
+  loadStudentsBtn.addEventListener("click", async () => {
     const classId = attendanceClassSelect.value;
-    if (unsubscribeStudents) {
-      unsubscribeStudents(); // detach previous listener
-      unsubscribeStudents = null;
-    }
     if (!classId) {
       studentAttendanceBody.innerHTML = "";
       return;
     }
+    const today = new Date().toISOString().split("T")[0]; // "2026-01-18"
     const q = query(studentsColRef, where("classId", "==", classId));
-    unsubscribeStudents = onSnapshot(q, (snapshot) => {
-      studentAttendanceBody.innerHTML = "";
-      snapshot.forEach((docSnap) => {
+    const studentSnap = await getDocs(q);
+    studentAttendanceBody.innerHTML = "";
+    studentSnap.forEach(async (docSnap) => {
         const data = docSnap.data();
         const id = docSnap.id;
+        const attendanceDocRef = doc(db, "students", id, "attendance", today);
+        const attendanceSnap = await getDoc(attendanceDocRef);
+        const present = attendanceSnap.exists() ? attendanceSnap.data().present : false;
         const row = document.createElement("tr");
         row.innerHTML = `
           <td>${data.name}</td>
           <td>${data.className}</td>
           <td>
-            <input type="checkbox" ${data.present ? "checked" : ""} />
+            <input type="checkbox" ${present ? "checked" : ""} />
           </td>
         `;
         const checkbox = row.querySelector("input[type='checkbox']");
         checkbox.addEventListener("change", async () => {
           try {
-            await updateDoc(doc(db, "students", id), { present: checkbox.checked });
+            await setDoc(attendanceDocRef, { 
+              present: checkbox.checked, 
+              // merge: true
+            });
           } catch (err) {
-            console.error("Error updating attendance:", err);
+            console.error("Error marking attendance:", err);
           }
         });
         studentAttendanceBody.appendChild(row);
       });
     });
-  });
 }
 if (tookAttendanceBtn && attendanceClassSelect) {
   tookAttendanceBtn.addEventListener("click", async () => {
@@ -224,7 +231,6 @@ if (tookAttendanceBtn && attendanceClassSelect) {
       return;
     }
     try {
-      // Update the class to mark attendance done
       const classDocRef = doc(db, "classes", classId);
       await updateDoc(classDocRef, {
         done: true,
@@ -236,4 +242,73 @@ if (tookAttendanceBtn && attendanceClassSelect) {
     }
   });
 }
+
+  // ===============================
+  // PAGE 4: PAST HISTORY
+  // ===============================
+if (pastClassSelect) {
+  getDocs(classesColRef).then(snapshot =>{
+    snapshot.forEach((docSnap) => {
+      const option = document.createElement("option");
+      option.value = docSnap.id;
+      option.textContent = docSnap.data().name;
+      pastClassSelect.appendChild(option);
+    });
+  });
+}
+onSnapshot(studentsColRef, snapshot => {
+  studentAttendanceBody.innerHTML = '';
+  snapshot.forEach(docSnap => {
+    const data = docSnap.data();
+    const row = document.createElement('tr');
+
+    const nameCell = document.createElement('td');
+    nameCell.textContent = data.name;
+    row.appendChild(nameCell);
+
+    const today = new Date().toISOString().split('T')[0];
+    const pastDates = Object.keys(data.attendance || {}).sort();
+
+    pastDates.forEach(date => {
+      const cell = document.createElement('td');
+      cell.textContent = data.attendance[date] ? 'Present' : 'Absent';
+      row.appendChild(cell);
+    });
+
+    studentAttendanceBody.appendChild(row);
+  });
+});
+loadPastBtn.addEventListener("click", async () => {
+  const classId = pastClassSelect.value;
+  const selectedDate = pastDateSelect.value; // format: "YYYY-MM-DD"
+  if (!classId || !selectedDate) {
+    alert("Please select a class and a date");
+    return;
+}
+
+  pastAttendanceBody.innerHTML = "";
+
+  // Get all students in that class
+  const studentsColRef = collection(db, "students");
+  const q = query(studentsColRef, where("classId", "==", classId));
+  const studentSnap = await getDocs(q);
+
+  // For each student, get attendance for the selected date
+  for (const studentDoc of studentSnap.docs) {
+    const studentData = studentDoc.data();
+    const studentId = studentDoc.id;
+
+    const attendanceDocRef = doc(db, "students", studentId, "attendance", selectedDate);
+    const attendanceSnap = await getDoc(attendanceDocRef);
+    const present = attendanceSnap.exists() ? attendanceSnap.data().present : false;
+
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td>${studentData.name}</td>
+      <td>${studentData.className}</td>
+      <td>${present ? "Yes" : "No"}</td>
+    `;
+    pastAttendanceBody.appendChild(row);
+  }
+});
 });
