@@ -1,7 +1,7 @@
 # Julia-HoyaDev-Final
 ## Overview
-A web-based attendance tracking application built with **HTML, CSS, JavaScript**, and **Firebase Firestore**.  
-This app allows users to create classes, add students, mark daily attendance, and view past attendance records — all in real time.
+A web-based attendance tracking application for professors to track student attendance.
+This app allows users to create classes, add students, mark daily attendance, and view past attendance records.
 
 ---
 
