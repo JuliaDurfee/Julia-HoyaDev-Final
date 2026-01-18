@@ -30,19 +30,21 @@ const db = getFirestore(app);
 document.addEventListener('DOMContentLoaded', () => {
 const addNewStudent = document.getElementById("add-student");
 const newStudentInput = document.getElementById("new-student-input");
-const studentList = document.getElementById("student-list");
+// const studentList = document.getElementById("student-list");
+const studentForm = document.getElementById('studentForm');
 
 const addNewClass = document.getElementById("add-class");
 const newClassInput = document.getElementById("new-classes-input");
-const classesList = document.getElementById("classes-list");
+// const classesList = document.getElementById("classes-list");
 const classSelect = document.getElementById("class-select");
-const studentForm = document.getElementById('studentForm');
-const tableBody = document.getElementById("dataTableBody");
+
+const classTableBody = document.getElementById("dataTableBody");
 const studentTableBody = document.getElementById("studentTableBody");
+// const studentAttendanceBody = document.getElementById("student-attendance-table-body");
+
 const classAttendanceDropdown = document.getElementById("class-select-attendance")
 
-
-// Reference to our collections
+// Reference to collections
 const classesColRef = collection(db, "classes");
 const studentsColRef = collection(db, "students");
 
@@ -50,131 +52,111 @@ const studentsColRef = collection(db, "students");
   // ===============================
   // PAGE 1: CLASSES TABLE PAGE
   // ===============================
-  if (addNewClass && newClassInput && tableBody) {
-addNewClass.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const className = newClassInput.value.trim();
-  if (!className) return;
-  try {
-    await addDoc(classesColRef, {
-      name: className,
-      done: false,
-      numStudents: 0,
-      createdAt: new Date()
-    });
-    newClassInput.value = "";
-  } catch (err) {
-    console.error("Error adding class: ", err);
-  }
-});
-    onSnapshot(classesColRef, (snapshot) => {
-    tableBody.innerHTML = ''; 
-
+if (addNewClass && newClassInput && classTableBody) {
+  addNewClass.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const className = newClassInput.value.trim();
+    if (!className) return;
+    try {
+      await addDoc(classesColRef, {
+        name: className,
+        done: false,
+        numStudents: 0,
+        createdAt: new Date()
+      });
+      newClassInput.value = "";
+    } catch (err) {
+      console.error("Error adding class: ", err);
+    }
+  });
+  onSnapshot(classesColRef, (snapshot) => {
+    classTableBody.innerHTML = ''; 
     snapshot.forEach(async (docSnap) => {
       const data = docSnap.data();
       const id = docSnap.id;
-
-            // Create the row element
-            const row = document.createElement('tr');
-            // Define the HTML structure for the row
-            row.innerHTML = `
-                <td class="${data.done ? 'done' : ''}">${data.text || data.name || 'N/A'}</td>
-                <td>${data.numStudents ?? 0}</td>
-                <td>
-                    <label class="checkmark-container">
-                        <input type="checkbox" ${data.done ? 'checked' : ''}>
-                  <span class="checkmark"></span>
-                </td>
-            `;
-
-            // Add the toggle event listener to the button inside this row
-            const checkbox = row.querySelector('input[type="checkbox"]');
-            checkbox.addEventListener('change', async (e) => {
-                try {
-                    const docRef = doc(db, "classes", id);
-                    await updateDoc(docRef, { done: e.target.checked });
-                } catch (err) {
-                    console.error("Error updating status:", err);
-                }
-            });
-            tableBody.appendChild(row);
-        });
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td class="${data.done ? 'done' : ''}">${data.text || data.name || 'N/A'}</td>
+        <td>${data.numStudents ?? 0}</td>
+        <td>
+          <label class="checkmark-container">
+            <input type="checkbox" ${data.done ? 'checked' : ''}>
+            <span class="checkmark"></span>
+        </td>
+      `;
+      const checkbox = row.querySelector('input[type="checkbox"]');
+      checkbox.addEventListener('change', async (e) => {
+        try {
+          const docRef = doc(db, "classes", id);
+          await updateDoc(docRef, { done: e.target.checked });
+        } catch (err) {
+          console.error("Error updating status:", err);
+        }
+      });
+      classTableBody.appendChild(row);
+      });
     });
-  }
+}
+
   // ===============================
   // PAGE 2: ADD STUDENT PAGE
   // ===============================
-    if (classSelect) {
-    onSnapshot(collection(db, "classes"), (snapshot) => {
-    // classesList.innerHTML = "";
+if (classSelect) {
+  onSnapshot(collection(db, "classes"), (snapshot) => {
     classSelect.innerHTML = `<option value="">Select a class</option>`;
-
     snapshot.forEach((docSnap) => {
       const classData = docSnap.data();
-
-      // dropdown
       const option = document.createElement("option");
       option.value = docSnap.id;
       option.textContent = classData.name;
       classSelect.appendChild(option);
     });
-    });
-  }
-  if (studentForm && newStudentInput && classSelect) {
-    studentForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-
-      const studentName = newStudentInput.value.trim();
-      const selectedClassId = classSelect.value;
-
-      if (!studentName || !selectedClassId) {
-        alert("Please enter a student name and select a class.");
-        return;
-      }
-
-      try {
-        // Get the class name from the dropdown
-        const className = classSelect.options[classSelect.selectedIndex].text;
-
-        // Add student to Firestore
-        await addDoc(studentsColRef, {
-          name: studentName,
-          classId: selectedClassId,
-          className: className,
-          present: false,
-          createdAt: new Date()
-        });
-
-        // Increment numStudents in the class
-        const classDocRef = doc(db, "classes", selectedClassId);
-        await updateDoc(classDocRef, {
-          numStudents: increment(1)
-        });
+  });
+}
+if (studentForm && newStudentInput && classSelect) {
+  studentForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const studentName = newStudentInput.value.trim();
+    const selectedClassId = classSelect.value;
+    if (!studentName || !selectedClassId) return;
+    try {
+      const className = classSelect.options[classSelect.selectedIndex].text;
+      await addDoc(studentsColRef, {
+        name: studentName,
+        classId: selectedClassId,
+        className: className,
+        present: false,
+        createdAt: new Date()
+      });
+      const classDocRef = doc(db, "classes", selectedClassId);
+      await updateDoc(classDocRef, {
+        numStudents: increment(1)
+      });
 
         newStudentInput.value = "";
         classSelect.value = "";
-      } catch (err) {
-        console.error("Error adding student:", err);
-      }
-    });
-  }
+    } catch (err) {
+      console.error("Error adding student:", err);
+    }
+  });
+}
 if (studentTableBody) {
-onSnapshot(studentsColRef, (snapshot) => {
+  onSnapshot(studentsColRef, (snapshot) => {
     studentTableBody.innerHTML = '';
     snapshot.forEach((docSnap) => {
       const data = docSnap.data();
       const id = docSnap.id;
-            let addedAt = 'N/A'; // default
+  //           let addedAt = 'N/A'; // default
 
-      if (data.createdAt) {
-    if (data.createdAt.seconds) {
-      // Firestore Timestamp
-      addedAt = new Date(data.createdAt.seconds * 1000).toLocaleString();
-    } else {
-      // JS Date object
-      addedAt = new Date(data.createdAt).toLocaleString();
-    }
-  }
+  //     if (data.createdAt) {
+  //   if (data.createdAt.seconds) {
+  //     // Firestore Timestamp
+  //     addedAt = new Date(data.createdAt.seconds * 1000).toLocaleString();
+  //   } else {
+  //     // JS Date object
+  //     addedAt = new Date(data.createdAt).toLocaleString();
+  //   }
+  // }
       const row = document.createElement("tr");
       row.innerHTML = `
         <td>${data.name || 'N/A'}</td>
@@ -193,49 +175,6 @@ async function countStudentsInClass(classId) {
   // ===============================
   // PAGE 3: ATTENDANCE PAGE
   // ===============================
-const studentAttendanceBody = document.getElementById("student-attendance-table-body");
-if (classAttendanceDropdown && studentAttendanceBody) {
-  classAttendanceDropdown.addEventListener("change", () => {
-    const classId = classAttendanceDropdown.value;
-    if (!classId) {
-      studentAttendanceBody.innerHTML = "";
-      return;
-    }
-
-    const q = query(studentsColRef, where("classId", "==", classId));
-    onSnapshot(q, (snapshot) => {
-      studentAttendanceBody.innerHTML = "";
-      snapshot.forEach((docSnap) => {
-        const data = docSnap.data();
-        const id = docSnap.id;
-        let addedAt = 'N/A';
-if (data.createdAt) {
-  addedAt = data.createdAt.seconds
-    ? new Date(data.createdAt.seconds * 1000).toLocaleString()
-    : new Date(data.createdAt).toLocaleString();
-}
-        const row = document.createElement("tr");
-        row.innerHTML = `
-          <td>${data.name}</td>
-          <td>
-            <input type="checkbox" ${data.present ? "checked" : ""} />
-          </td>
-        `;
-
-        const checkbox = row.querySelector("input[type='checkbox']");
-        checkbox.addEventListener("change", async () => {
-          try {
-            await updateDoc(doc(db, "students", id), { present: checkbox.checked });
-          } catch (err) {
-            console.error("Error updating attendance:", err);
-          }
-        });
-
-        studentAttendanceBody.appendChild(row);
-      });
-    });
-  });
-}
 if (classAttendanceDropdown) {
   onSnapshot(classesColRef, (snapshot) => {
     classAttendanceDropdown.innerHTML = `<option value="">Select a class</option>`;
@@ -244,6 +183,45 @@ if (classAttendanceDropdown) {
       option.value = docSnap.id;
       option.textContent = docSnap.data().name;
       classAttendanceDropdown.appendChild(option);
+    });
+  });
+}
+let unsubscribeStudents = null;
+if (classSelect && studentTableBody) {
+  classSelect.addEventListener("change", () => {
+    const classId = classSelect.value;
+    if (unsubscribeStudents) {
+      unsubscribeStudents();
+      unsubscribeStudents = null;
+    }
+    if (!classId) {
+      studentTableBody.innerHTML = "";
+      return;
+    }
+    const q = query(studentsColRef, where("classId", "==", classId));
+    unsubscribeStudents = onSnapshot(q, (snapshot) => {
+      studentTableBody.innerHTML = "";
+      snapshot.forEach((docSnap) => {
+        const data = docSnap.data();
+        const id = docSnap.id;
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${data.name}</td>
+          <td>${data.className}</td>
+          <td>
+            <input type="checkbox" ${data.present ? "checked" : ""} />
+          </td>
+        `;
+        const checkbox = row.querySelector("input[type='checkbox']");
+        checkbox.addEventListener("change", async () => {
+          try {
+            await updateDoc(doc(db, "students", id), { present: checkbox.checked });
+          } catch (err) {
+            console.error("Error updating attendance:", err);
+          }
+        });
+      studentTableBody.appendChild(row);
+      });
     });
   });
 }
