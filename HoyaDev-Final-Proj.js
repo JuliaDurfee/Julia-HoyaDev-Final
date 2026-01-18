@@ -268,6 +268,9 @@ if(pastAttendanceBody){
       const nameCell = document.createElement('td');
       nameCell.textContent = data.name;
       row.appendChild(nameCell);
+      const classCell = document.createElement('td');
+      classCell.textContent = data.className || "N/A";
+      row.appendChild(classCell);
       const today = new Date().toISOString().split('T')[0];
       const pastDates = Object.keys(data.attendance || {}).sort();
 
